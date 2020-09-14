@@ -105,7 +105,7 @@ void addBuiltIns(Expression e) {
 
     bool b1 = v1.compareTo(Decimal.zero) != 0;
 
-    if (!b1) {
+    if (b1) {
       return Decimal.one;
     }
 
@@ -482,17 +482,8 @@ void addBuiltIns(Expression e) {
 
   e.addFunc(FunctionImpl("SQRT", 1, fEval: (params) {
     assert(params.first != null, "First operand may not be null.");
-    // From The Java Programmers Guide To numerical Computing
-    // (Ronald Mak, 2003)
-    Decimal x = params[0];
-    if(x.compareTo(Decimal.zero) == 0) {
-      return Decimal.zero;
-    }
-    if (x.signum < 0) {
-      throw new ExpressionException("Argument to SQRT() function must not be negative");
-    }
-    //BigInt n = x.
 
+    return params.first * Decimal.fromInt(2);
   }));
 
   e.variables["e"] = e.createLazyNumber(Expression.e);
@@ -506,7 +497,7 @@ class OperatorImpl extends AbstractOperator {
   Function(Decimal v1, Decimal v2) fEval;
 
   OperatorImpl(String oper, int precedence, bool leftAssoc,
-      {bool booleanOperator, this.fEval})
+      {bool booleanOperator = false, this.fEval})
       : super(oper, precedence, leftAssoc, booleanOperator: booleanOperator);
 
   @override
@@ -531,7 +522,7 @@ class UnaryOperatorImpl extends AbstractUnaryOperator {
 class FunctionImpl extends AbstractFunction {
   Function(List<Decimal>) fEval;
 
-  FunctionImpl(String name, int numParams, {bool booleanFunction, this.fEval})
+  FunctionImpl(String name, int numParams, {bool booleanFunction = false, this.fEval})
       : super(name, numParams, booleanFunction: booleanFunction);
 
   @override
@@ -543,7 +534,7 @@ class FunctionImpl extends AbstractFunction {
 class LazyFunctionImpl extends AbstractLazyFunction {
   Function(List<LazyNumber>) fEval;
 
-  LazyFunctionImpl(String name, int numParams, {bool booleanFunction, this.fEval})
+  LazyFunctionImpl(String name, int numParams, {bool booleanFunction = false, this.fEval})
       : super(name, numParams, booleanFunction: booleanFunction);
 
   @override

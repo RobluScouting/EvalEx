@@ -1,5 +1,8 @@
 bool isLetter(String ch) {
-  assert(ch.length == 1);
+  if(ch.length == 0) {
+    return false;
+  }
+
   int rune = ch.codeUnitAt(0);
   return (rune >= 0x41 && rune <= 0x5A) || (rune >= 0x61 && rune <= 0x7A);
 }
@@ -20,7 +23,10 @@ bool isDigit(String ch) {
 
 // https://github.com/google/quiver-dart/blob/774b7fda30afad7537d779def2e34e47de385286/lib/strings.dart#L110
 bool isWhitespace(String ch) {
-  assert(ch.length == 1);
+  if(ch.length == 0) {
+    return false;
+  }
+
   int rune = ch.codeUnitAt(0);
   return (rune >= 0x0009 && rune <= 0x000D) ||
       rune == 0x0020 ||

@@ -332,8 +332,7 @@ class Expression {
           break;
         case TokenType.function:
           ILazyFunction f = functions[token.surface.toUpperCase()];
-          List<LazyNumber> p =
-              List<LazyNumber>(!f.numParamsVaries() ? f.getNumParams() : 0);
+          List<LazyNumber> p = List<LazyNumber>();
           // pop parameters off the stack until we hit the start of
           // this function's parameter list
           while (!stack.isEmpty && stack.first != _paramsStart) {
@@ -423,12 +422,35 @@ class Expression {
     return function;
   }
 
-  Expression setVariable(String variable, Decimal value) {
+  Expression setDecimalVariable(String variable, Decimal value) {
     return setLazyVariable(variable, createLazyNumber(value));
   }
 
   Expression setLazyVariable(String variable, LazyNumber value) {
     variables[variable] = value;
+    return this;
+  }
+
+  Expression setStringVariable(String variable, String value) {
+    if (isNumber(value)) {
+      variables[variable] = createLazyNumber(Decimal.parse(value));
+    } else if (value.toLowerCase() == "null") {
+      variables[variable] = null;
+    } else {
+      final String expStr = value;
+      variables[variable] = LazyNumberImpl(eval: () {
+        Expression innerE = Expression(expStr);
+        innerE.variables = variables;
+        innerE.functions = functions;
+        innerE.operators = operators;
+        Decimal val = innerE.eval();
+        return val;
+      }, getString: () {
+        return expStr;
+      });
+
+      _rpn = null;
+    }
     return this;
   }
 
@@ -483,9 +505,8 @@ class Expression {
                 missingParametersForOperator + token.toString());
           }
           // pop the operator's 2 parameters and add the result
-          int peek = stack.first;
-          stack.removeLast();
-          stack.addLast(peek - 2 + 1);
+          int peek = stack.removeFirst();
+          stack.addFirst(peek - 2 + 1);
           break;
         case TokenType.function:
           ILazyFunction f = functions[token.surface.toUpperCase()];
@@ -508,17 +529,15 @@ class Expression {
                 "Too many function calls, maximum scope exceeded");
           }
           // push the result of the function
-          int peek = stack.first;
-          stack.removeLast();
-          stack.addLast(peek + 1);
+          int peek = stack.removeFirst();
+          stack.addFirst(peek + 1);
           break;
         case TokenType.openParen:
           stack.addFirst(0);
           break;
         default:
-          int peek = stack.first;
-          stack.removeLast();
-          stack.addLast(peek + 1);
+          int peek = stack.removeFirst();
+          stack.addFirst(peek + 1);
       }
     }
 
@@ -563,6 +582,7 @@ class Expression {
     if (rpnList.isNotEmpty) {
       for (int i = rpnList.length - 1; i >= 0; i--) {
         Token t = rpnList[i];
+
         /*
                  * The IF function is handled special. If the third parameter is
                  * boolean, then the IF is also considered a boolean. Just skip
@@ -746,7 +766,7 @@ class _Tokenizer extends Iterator<Token> {
       while ((isLetter(ch) || isDigit(ch) || _expression._varChars.indexOf(ch) >= 0
           || token.length() == 0 && _expression._firstVarChars.indexOf(ch) >= 0) && (pos < input.length)) {
         token.append(input[pos++]);
-        ch = pos == input.length ? 0 : input[pos];
+        ch = pos == input.length ? "" : input[pos];
       }
       // Remove optional white spaces after function or variable name
       if (isWhitespace(ch)) {
@@ -785,7 +805,7 @@ class _Tokenizer extends Iterator<Token> {
         if (_expression.operators.containsKey(greedyMatch)) {
           validOperatorSeenUntil = pos;
         }
-        ch = pos == input.length ? 0 : input[pos];
+        ch = pos == input.length ? "" : input[pos];
       }
       if (validOperatorSeenUntil != -1) {
         token.append(input.substring(initialPos, validOperatorSeenUntil));

@@ -30,7 +30,7 @@ import 'package:eval_ex/expression.dart';
 import 'package:eval_ex/operator.dart';
 
 abstract class AbstractOperator extends AbstractLazyOperator implements IOperator {
-  AbstractOperator(String oper, int precedence, bool leftAssoc, {bool booleanOperator}) :
+  AbstractOperator(String oper, int precedence, bool leftAssoc, {bool booleanOperator = false}) :
       super(oper, precedence, leftAssoc, booleanOperator: booleanOperator);
 
   LazyNumber evalLazy(final LazyNumber v1, final LazyNumber v2) {
