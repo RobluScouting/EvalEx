@@ -28,9 +28,6 @@ import 'dart:collection';
 import 'dart:core';
 
 import 'package:decimal/decimal.dart';
-import 'package:eval_ex/abstract_function.dart';
-import 'package:eval_ex/abstract_lazy_function.dart';
-import 'package:eval_ex/abstract_operator.dart';
 import 'package:eval_ex/abstract_unary_operator.dart';
 import 'package:eval_ex/built_ins.dart';
 import 'package:eval_ex/expression_settings.dart';
@@ -467,7 +464,7 @@ class Expression {
     // each
     // layer on the stack being the count of the number of parameters in
     // that scope
-    ListQueue<int> stack = new ListQueue();
+    ListQueue<int> stack = ListQueue();
 
     // push the 'global' scope
     stack.addFirst(0);
@@ -486,8 +483,9 @@ class Expression {
                 missingParametersForOperator + token.toString());
           }
           // pop the operator's 2 parameters and add the result
+          int peek = stack.first;
           stack.removeLast();
-          stack.addLast(stack.first - 2 + 1);
+          stack.addLast(peek - 2 + 1);
           break;
         case TokenType.function:
           ILazyFunction f = functions[token.surface.toUpperCase()];
@@ -510,15 +508,17 @@ class Expression {
                 "Too many function calls, maximum scope exceeded");
           }
           // push the result of the function
+          int peek = stack.first;
           stack.removeLast();
-          stack.addLast(stack.first + 1);
+          stack.addLast(peek + 1);
           break;
         case TokenType.openParen:
           stack.addFirst(0);
           break;
         default:
+          int peek = stack.first;
           stack.removeLast();
-          stack.add(stack.first + 1);
+          stack.addLast(peek + 1);
       }
     }
 
@@ -556,6 +556,29 @@ class Expression {
       }
     }
     return result.toString();
+  }
+
+  bool isBoolean() {
+    List<Token> rpnList = getRPN();
+    if (rpnList.isNotEmpty) {
+      for (int i = rpnList.length - 1; i >= 0; i--) {
+        Token t = rpnList[i];
+        /*
+                 * The IF function is handled special. If the third parameter is
+                 * boolean, then the IF is also considered a boolean. Just skip
+                 * the IF function to check the second parameter.
+                 */
+        if (t.surface == "IF") {
+          continue;
+        }
+        if (t.type == TokenType.function) {
+          return functions[t.surface].isBooleanFunction();
+        } else if (t.type == TokenType.operator) {
+          return operators[t.surface].isBooleanOperator();
+        }
+      }
+    }
+    return false;
   }
 }
 
@@ -651,15 +674,15 @@ class _Tokenizer extends Iterator<Token> {
 
   Expression _expression;
 
-  int _pos = 0;
-  String _input;
-  Token _previousToken;
+  int pos = 0;
+  String input;
+  Token previousToken;
 
-  _Tokenizer(this._expression, String input) : _input = input.trim();
+  _Tokenizer(this._expression, String input) : input = input.trim();
 
   String peekNextChar() {
-    if (_pos < (_input.length - 1)) {
-      return _input[_pos + 1];
+    if (pos < (input.length - 1)) {
+      return input[pos + 1];
     } else {
       return null;
     }
@@ -671,77 +694,66 @@ class _Tokenizer extends Iterator<Token> {
 
   @override
   Token get current {
-    return _previousToken;
+    return previousToken;
   }
 
   @override
   bool moveNext() {
-    Token token = Token();
+    Token token = new Token();
 
-    if (_pos >= _input.length) {
-      _previousToken = null;
+    if (pos >= input.length) {
+      previousToken = null;
       return false;
     }
-
-    String ch = _input[_pos];
-    while (isWhitespace(ch) && _pos < _input.length) {
-      ch = _input[++_pos];
+    String ch = input[pos];
+    while (isWhitespace(ch) && pos < input.length) {
+      ch = input[++pos];
     }
-    token.pos = _pos;
+    token.pos = pos;
 
     bool isHex = false;
 
-    if (isDigit(ch) ||
-        (ch == Expression._decimalSeparator && isDigit(peekNextChar()))) {
+    if (isDigit(ch) || (ch == Expression._decimalSeparator && isDigit(peekNextChar()))) {
       if (ch == '0' && (peekNextChar() == 'x' || peekNextChar() == 'X')) {
         isHex = true;
       }
-      while ((isHex && isHexDigit(ch)) ||
-          (isDigit(ch) ||
-                  ch == Expression._decimalSeparator ||
-                  ch == 'e' ||
-                  ch == 'E' ||
-                  (ch == Expression._minusSign &&
-                      token.length() > 0 &&
-                      ('e' == token.charAt(token.length() - 1) ||
-                          'E' == token.charAt(token.length() - 1))) ||
-                  (ch == '+' &&
-                      token.length() > 0 &&
-                      ('e' == token.charAt(token.length() - 1) ||
-                          'E' == token.charAt(token.length() - 1)))) &&
-              (_pos < _input.length)) {
-        token.append(_input[_pos++]);
-        ch = _pos == _input.length ? 0 : _input[_pos];
+      while ((isHex && isHexDigit(ch))
+          || (isDigit(ch) || ch == Expression._decimalSeparator || ch == 'e' || ch == 'E'
+              || (ch == Expression._minusSign && token.length() > 0
+                  && ('e' == token.charAt(token.length() - 1)
+                      || 'E' == token.charAt(token.length() - 1)))
+              || (ch == '+' && token.length() > 0
+                  && ('e' == token.charAt(token.length() - 1)
+                      || 'E' == token.charAt(token.length() - 1))))
+              && (pos < input.length)) {
+        token.append(input[pos++]);
+        ch = pos == input.length ? "" : input[pos];
       }
       token.type = isHex ? TokenType.hexLiteral : TokenType.literal;
     } else if (ch == '"') {
-      _pos++;
-      if (_previousToken.type != TokenType.stringParam) {
-        ch = _input[_pos];
+      pos++;
+      if (previousToken.type != TokenType.stringParam) {
+        ch = input[pos];
         while (ch != '"') {
-          token.append(_input[_pos++]);
-          ch = _pos == _input.length ? 0 : _input[_pos];
+          token.append(input[pos++]);
+          ch = pos == input.length ? 0 : input[pos];
         }
         token.type = TokenType.stringParam;
       } else {
         return moveNext();
       }
     } else if (isLetter(ch) || _expression._firstVarChars.indexOf(ch) >= 0) {
-      while ((isLetter(ch) ||
-              isDigit(ch) ||
-              _expression._firstVarChars.indexOf(ch) >= 0 ||
-              token.length() == 0 &&
-                  _expression._firstVarChars.indexOf(ch) >= 0) &&
-          (_pos < _input.length)) {
-        token.append(_input[_pos++]);
-        ch = _pos == _input.length ? 0 : _input[_pos];
+      while ((isLetter(ch) || isDigit(ch) || _expression._varChars.indexOf(ch) >= 0
+          || token.length() == 0 && _expression._firstVarChars.indexOf(ch) >= 0) && (pos < input.length)) {
+        token.append(input[pos++]);
+        ch = pos == input.length ? 0 : input[pos];
       }
       // Remove optional white spaces after function or variable name
       if (isWhitespace(ch)) {
-        while (isWhitespace(ch) && _pos < _input.length) {
-          ch = _input[_pos++];
+        while (isWhitespace(ch) && pos < input.length) {
+          ch = input[pos++];
         }
-        _pos--;
+        pos--;
       }
       if (_expression.operators.containsKey(token.surface)) {
         token.type = TokenType.operator;
@@ -759,46 +771,39 @@ class _Tokenizer extends Iterator<Token> {
         token.type = TokenType.comma;
       }
       token.append(ch);
-      _pos++;
+      pos++;
     } else {
       String greedyMatch = "";
-      int initialPos = _pos;
-      ch = _input[_pos];
+      int initialPos = pos;
+      ch = input[pos];
       int validOperatorSeenUntil = -1;
-      while (!isLetter(ch) &&
-          !isDigit(ch) &&
-          _expression._firstVarChars.indexOf(ch) < 0 &&
-          !isWhitespace(ch) &&
-          ch != '(' &&
-          ch != ')' &&
-          ch != ',' &&
-          (_pos < _input.length)) {
+      while (!isLetter(ch) && !isDigit(ch) && _expression._firstVarChars.indexOf(ch) < 0
+          && !isWhitespace(ch) && ch != '(' && ch != ')' && ch != ','
+          && (pos < input.length)) {
         greedyMatch += ch;
-        _pos++;
+        pos++;
         if (_expression.operators.containsKey(greedyMatch)) {
-          validOperatorSeenUntil = _pos;
+          validOperatorSeenUntil = pos;
         }
-        ch = _pos == _input.length ? 0 : _input[_pos];
+        ch = pos == input.length ? 0 : input[pos];
       }
       if (validOperatorSeenUntil != -1) {
-        token.append(_input.substring(initialPos, validOperatorSeenUntil));
-        _pos = validOperatorSeenUntil;
+        token.append(input.substring(initialPos, validOperatorSeenUntil));
+        pos = validOperatorSeenUntil;
       } else {
         token.append(greedyMatch);
       }
 
-      if (_previousToken == null ||
-          _previousToken.type == TokenType.operator ||
-          _previousToken.type == TokenType.openParen ||
-          _previousToken.type == TokenType.comma ||
-          _previousToken.type == TokenType.unaryOperator) {
+      if (previousToken == null || previousToken.type == TokenType.operator
+          || previousToken.type == TokenType.openParen || previousToken.type == TokenType.comma
+          || previousToken.type == TokenType.unaryOperator) {
         token.surface += "u";
         token.type = TokenType.unaryOperator;
       } else {
         token.type = TokenType.operator;
       }
     }
-    _previousToken = token;
+    previousToken = token;
     return true;
   }
 }
