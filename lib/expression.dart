@@ -32,6 +32,7 @@ import 'package:eval_ex/abstract_function.dart';
 import 'package:eval_ex/abstract_lazy_function.dart';
 import 'package:eval_ex/abstract_operator.dart';
 import 'package:eval_ex/abstract_unary_operator.dart';
+import 'package:eval_ex/built_ins.dart';
 import 'package:eval_ex/expression_settings.dart';
 import 'package:eval_ex/func.dart';
 import 'package:eval_ex/lazy_function.dart';
@@ -58,7 +59,7 @@ class Expression {
   static final String missingParametersForOperator =
       "Missing parameter(s) for operator ";
 
-  int _powerOperatorPrecedence = operatorPrecedencePower;
+  int powerOperatorPrecedence = operatorPrecedencePower;
 
   String _firstVarChars = "_";
 
@@ -99,8 +100,10 @@ class Expression {
       String expression, ExpressionSettings expressionSettings)
       : _expressionString = expression,
         _originalExpression = expression {
-    this._powerOperatorPrecedence =
+    this.powerOperatorPrecedence =
         expressionSettings.getPowerOperatorPrecedence();
+
+    addBuiltIns(this);
   }
 
   bool isNumber(String st) {
@@ -591,26 +594,6 @@ abstract class LazyNumber {
   Decimal eval();
 
   String getString();
-}
-
-abstract class LazyFunction extends AbstractLazyFunction {
-  LazyFunction(String name, int numParams, {bool booleanFunction = false})
-      : super(name, numParams, booleanFunction: booleanFunction);
-}
-
-abstract class Func extends AbstractFunction {
-  Func(String name, int numParams, {bool booleanFunction = false})
-      : super(name, numParams, booleanFunction: booleanFunction);
-}
-
-abstract class Operator extends AbstractOperator {
-  Operator(String name, int precedence, bool leftAssoc, {bool booleanOperator})
-      : super(name, precedence, leftAssoc, booleanOperator: booleanOperator);
-}
-
-abstract class UnaryOperator extends AbstractUnaryOperator {
-  UnaryOperator(String oper, int precedence, bool leftAssoc)
-      : super(oper, precedence, leftAssoc);
 }
 
 enum TokenType {
