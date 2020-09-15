@@ -1,3 +1,7 @@
+## [1.0.3] - 9/15/2020
+Added safeguards for "^" and "FACT" on really large numbers so they don't
+kill evaluation performance.
+
 ## [1.0.2] - 9/15/2020
 Fixed formatting
 

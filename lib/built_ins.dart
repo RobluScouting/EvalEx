@@ -76,6 +76,12 @@ void addBuiltIns(Expression e) {
     assert(v1 != null, "First operand may not be null");
     assert(v2 != null, "Second operand may not be null");
 
+    // Do an more high performance estimate to see if this should be request
+    // should be canned
+    double test = math.pow(v1.toDouble(), v2.toDouble());
+    assert(!test.isInfinite, "Exponentiation too expensive.");
+    assert(!test.isNaN, "Exponentiation invalid.");
+
     // Thanks to Gene Marin:
     // http://stackoverflow.com/questions/3579779/how-to-do-a-fractional-power-on-bigdecimal-in-java
     int signOf2 = v2.signum;
@@ -242,8 +248,10 @@ void addBuiltIns(Expression e) {
 
   e.addFunc(FunctionImpl("FACT", 1, booleanFunction: false, fEval: (params) {
     assert(params.first != null, "Operand may not be null");
+    assert(params.first.toDouble() <= 50, "Operand must be less than 50");
 
     int number = params.first.toInt();
+
     Decimal factorial = Decimal.one;
     for (int i = 1; i <= number; i++) {
       factorial = factorial * Decimal.fromInt(i);
@@ -507,6 +515,9 @@ void addBuiltIns(Expression e) {
 
     return Decimal.parse(math.sqrt(params.first.toDouble()).toString());
   }));
+
+  e.variables["the answer to life, the universe, and everything"] =
+      e.createLazyNumber(Decimal.fromInt(42));
 
   e.variables["e"] = e.createLazyNumber(Expression.e);
   e.variables["PI"] = e.createLazyNumber(Expression.pi);
