@@ -1,5 +1,5 @@
 bool isLetter(String ch) {
-  if(ch.length == 0) {
+  if (ch.length == 0) {
     return false;
   }
 
@@ -13,7 +13,7 @@ bool isLetterOrDigit(String ch) {
 
 // https://github.com/google/quiver-dart/blob/774b7fda30afad7537d779def2e34e47de385286/lib/strings.dart#L102
 bool isDigit(String ch) {
-  if(ch.length == 0) {
+  if (ch.length == 0) {
     return false;
   }
 
@@ -23,10 +23,9 @@ bool isDigit(String ch) {
 
 // https://github.com/google/quiver-dart/blob/774b7fda30afad7537d779def2e34e47de385286/lib/strings.dart#L110
 bool isWhitespace(String ch) {
-  if(ch.length == 0) {
+  if (ch.length == 0) {
     return false;
   }
-
   int rune = ch.codeUnitAt(0);
   return (rune >= 0x0009 && rune <= 0x000D) ||
       rune == 0x0020 ||
@@ -42,4 +41,3 @@ bool isWhitespace(String ch) {
       rune == 0x3000 ||
       rune == 0xFEFF;
 }
-

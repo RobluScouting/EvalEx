@@ -30,7 +30,17 @@ import 'abstract_lazy_function.dart';
 import 'expression.dart';
 import 'func.dart';
 
+/// Abstract implementation of a direct function.<br>
+///
+/// This abstract implementation does implement lazyEval so that it returns
+/// the result of eval.
 abstract class AbstractFunction extends AbstractLazyFunction implements IFunc {
+  /// Creates a new function with given name and parameter count.
+  ///
+  /// [name] - The name of the function.
+  /// [numParams] - The number of parameters for this function.
+  /// `-1` denotes a variable number of parameters.
+  /// [booleanFunction] Whether this function is a boolean function.
   AbstractFunction(String name, int numParams, {bool booleanFunction = false})
       : super(name, numParams, booleanFunction: booleanFunction);
 
@@ -48,7 +58,7 @@ class _LazyNumberImpl extends LazyNumber {
 
   @override
   Decimal eval() {
-      return _abstractFunction.eval(_getParams());
+    return _abstractFunction.eval(_getParams());
   }
 
   @override

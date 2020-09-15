@@ -29,9 +29,18 @@ import 'package:eval_ex/abstract_lazy_operator.dart';
 import 'package:eval_ex/expression.dart';
 import 'package:eval_ex/operator.dart';
 
-abstract class AbstractOperator extends AbstractLazyOperator implements IOperator {
-  AbstractOperator(String oper, int precedence, bool leftAssoc, {bool booleanOperator = false}) :
-      super(oper, precedence, leftAssoc, booleanOperator: booleanOperator);
+/// Abstract implementation of an operator.
+abstract class AbstractOperator extends AbstractLazyOperator
+    implements IOperator {
+  /// Creates a new operator.
+  ///
+  /// [oper] - The operator name (pattern).
+  /// [precedence] - The operators precedence.
+  /// [leftAssoc] - `true` if the operator is left associative, else `false<`
+  /// [booleanOperator] Whether this operator is boolean.
+  AbstractOperator(String oper, int precedence, bool leftAssoc,
+      {bool booleanOperator = false})
+      : super(oper, precedence, leftAssoc, booleanOperator: booleanOperator);
 
   LazyNumber evalLazy(final LazyNumber v1, final LazyNumber v2) {
     return _LazyNumberImpl(this, v1, v2);

@@ -28,6 +28,13 @@ import 'package:decimal/decimal.dart';
 
 import 'lazy_function.dart';
 
+/// Base interface which is required for all directly evaluated functions.
 abstract class IFunc extends ILazyFunction {
+  /// Implementation for this function.
+  ///
+  /// [parameters] - Parameters will be passed by the expression evaluator as a
+  ///            {@link List} of {@link BigDecimal} values.
+  /// Returns the function must return a new {@link BigDecimal} value as a
+  /// computing result.
   Decimal eval(List<Decimal> parameters);
 }

@@ -27,6 +27,7 @@
 import 'package:decimal/decimal.dart';
 import 'package:eval_ex/expression.dart';
 
+/// Lazy Number for IF function created for lazily evaluated IF condition
 class LazyIfNumber implements LazyNumber {
   List<LazyNumber> _lazyParams;
 

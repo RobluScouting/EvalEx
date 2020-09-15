@@ -26,12 +26,26 @@
 
 import 'lazy_function.dart';
 
+/// Abstract implementation of a lazy function which implements all necessary
+/// methods with the exception of the main logic.
 abstract class AbstractLazyFunction implements ILazyFunction {
+  /// Name of this function.
   String name;
+  /// Number of parameters expected for this function. <code>-1</code>
+  /// denotes a variable number of parameters.
   int numParams;
+  /// Whether this function is a boolean function.
   bool booleanFunction;
 
-  AbstractLazyFunction(String name, this.numParams, {this.booleanFunction = false}) : name = name.toUpperCase();
+  /// Creates a new function with given name and parameter count.
+  ///
+  /// [name] - The name of the function.
+  /// [numParams] - The number of parameters for this function.
+  /// `-1<` denotes a variable number of parameters.
+  /// [booleanFunction] Whether this function is a boolean function.
+  AbstractLazyFunction(String name, this.numParams,
+      {this.booleanFunction = false})
+      : name = name.toUpperCase();
 
   @override
   String getName() {
@@ -52,5 +66,4 @@ abstract class AbstractLazyFunction implements ILazyFunction {
   bool isBooleanFunction() {
     return booleanFunction;
   }
-
 }

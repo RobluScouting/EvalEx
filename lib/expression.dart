@@ -36,69 +36,102 @@ import 'package:eval_ex/lazy_operator.dart';
 import 'package:eval_ex/utils.dart';
 
 class Expression {
+  /// Unary operators precedence: + and - as prefix
   static const int operatorPrecedenceUnary = 60;
+
+  /// Equality operators precedence: =, ==, !=. <>
   static const int operatorPrecedenceEquality = 7;
+
+  /// Comparative operators precedence: <,>,<=,>=
   static const int operatorPrecedenceComparison = 10;
+
+  /// Or operator precedence: ||
   static const int operatorPrecedenceOr = 2;
+
+  /// And operator precedence: &&
   static const int operatorPrecedenceAnd = 4;
+
+  /// Power operator precedence: ^
   static const int operatorPrecedencePower = 40;
+
+  /// An optional higher power operator precedence. {@link ExpressionSettings}
   static const int operatorPrecedencePowerHigher = 80;
+
+  /// Multiplicative operators precedence: *,/,%
   static const int operatorPrecedenceMultiplicative = 30;
+
+  /// Additive operators precedence: + and -
   static const int operatorPrecedenceAdditive = 20;
 
+  /// Definition of PI as a constant, can be used in expressions as variable.
   static final Decimal pi = Decimal.parse(
       "3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679");
 
+  /// Definition of e: "Euler's number" as a constant, can be used in expressions as variable.
   static final Decimal e = Decimal.parse(
       "2.71828182845904523536028747135266249775724709369995957496696762772407663");
 
+  /// Exception message for missing operators.
   static final String missingParametersForOperator =
       "Missing parameter(s) for operator ";
 
+  /// The precedence of the power (^) operator. Default is 40.
   int powerOperatorPrecedence = operatorPrecedencePower;
 
+  /// The characters (other than letters and digits) allowed as the first character in a variable.
   String _firstVarChars = "_";
 
+  /// The characters (other than letters and digits) allowed as the second or subsequent characters in a variable.
   String _varChars = "_";
 
-  final String _originalExpression;
-
+  /// The current infix expression, with optional variable substitutions.
   String _expressionString;
 
+  /// The cached RPN (Reverse Polish Notation) of the expression.
   List<Token> _rpn;
 
+  /// All defined operators with name and implementation.
   Map<String, ILazyOperator> operators =
       SplayTreeMap((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
 
+  /// All defined functions with name and implementation.
   Map<String, ILazyFunction> functions =
       SplayTreeMap((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
 
+  /// All defined variables with name and value.
   Map<String, LazyNumber> variables =
       SplayTreeMap((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
 
+  /// What character to use for decimal separators.
   static final String _decimalSeparator = ".";
 
+  /// What character to use for minus sign (negative values).
   static final String _minusSign = "-";
 
+  /// The BigDecimal representation of the left parenthesis, used for parsing varying numbers of function parameters.
   static final LazyNumber _paramsStart =
       LazyNumberImpl(eval: () => null, getString: () => null);
 
+  /// Construct a LazyNumber from a BigDecimal
   LazyNumber createLazyNumber(final Decimal decimal) {
     return LazyNumberImpl(
         eval: () => decimal, getString: () => decimal.toString());
   }
 
-  Expression(String expression)
-      : this.withExpressionSettings(expression);
+  /// Creates a new expression instance from an expression string
+  ///
+  /// [expression] the expression. E.g. ```2.4*sin(3)/(2-4)``` or ```sin(y)>0 & max(z, 3)>3```
+  Expression(String expression,
+      {this.powerOperatorPrecedence = Expression.operatorPrecedencePower})
+      : _expressionString = expression {
 
-  Expression.withExpressionSettings(
-      String expression, {this.powerOperatorPrecedence = Expression.operatorPrecedencePower})
-      : _expressionString = expression,
-        _originalExpression = expression {
-    
     addBuiltIns(this);
   }
 
+  /// Is the string a number?
+  ///
+  /// [st] The string.
+  /// Returns `true`, if the input string is a number.
   bool isNumber(String st) {
     if (st[0] == _minusSign && st.length == 1) {
       return false;
@@ -128,6 +161,11 @@ class Expression {
     return true;
   }
 
+  /// Implementation of the `Shunting Yard` algorithm to transform an infix expression to a RPN
+  /// expression.
+  ///
+  /// [expression] - The input expression in infx.
+  /// Returns a RPN representation of the expression, with each token as a list member.
   List<Token> _shuntingYard(String expression) {
     List<Token> outputQueue = List();
     ListQueue<Token> stack = ListQueue();
@@ -283,7 +321,10 @@ class Expression {
     }
   }
 
-  Decimal eval({bool stripTrailingZeros = false}) {
+  /// Evaluates the expression.
+  ///
+  /// Returns the result of the expression. Trailing zeros are stripped.
+  Decimal eval() {
     ListQueue<LazyNumber> stack = ListQueue();
 
     for (final Token token in getRPN()) {
@@ -389,16 +430,30 @@ class Expression {
     return result;
   }
 
+  /// Sets the characters other than letters and digits that are valid as the first character of a
+  /// variable.
+  ///
+  /// [chars] - The new set of variable characters.
+  /// Returns the expression, allows to chain methods.
   Expression setFirstVariableCharacters(String chars) {
     this._firstVarChars = chars;
     return this;
   }
 
+  /// Sets the characters other than letters and digits that are valid as the second and subsequent
+  /// characters of a variable.
+  ///
+  /// [chars] - The new set of variable characters.
+  /// Returns the expression, allows to chain methods.
   Expression setVariableCharacters(String chars) {
     this._varChars = chars;
     return this;
   }
 
+  /// Adds an operator to the list of supported operators.
+  ///
+  /// [operator] - The operator to add.
+  /// Returns the previous operator with that name, or <code>null</code> if there was none.
   T addOperator<T extends ILazyOperator>(T operator) {
     String key = operator.getOper();
     if (operator is AbstractUnaryOperator) {
@@ -408,25 +463,48 @@ class Expression {
     return operator;
   }
 
+  /// Adds a function to the list of supported functions
+  ///
+  /// [function] - The function to add.
+  /// Returns the previous operator with that name, or <code>null</code> if there was none.
   IFunc addFunc(IFunc function) {
     functions[function.getName()] = function;
     return function;
   }
 
+  /// Adds a lazy function function to the list of supported functions
+  ///
+  /// [function] - The function to add.
+  /// Returns the previous operator with that name, or <code>null</code> if there was none.
   ILazyFunction addLazyFunction(ILazyFunction function) {
     functions[function.getName()] = function;
     return function;
   }
 
+  /// Sets a variable value.
+  ///
+  /// [variable] - The variable name.
+  /// [value] - The variable value.
+  /// Returns the expression, allows to chain methods.
   Expression setDecimalVariable(String variable, Decimal value) {
     return setLazyVariable(variable, createLazyNumber(value));
   }
 
+  /// Sets a variable value.
+  ///
+  /// [variable] The variable name.
+  /// [value] - The variable value.
+  /// Returns the expression, allows to chain methods.
   Expression setLazyVariable(String variable, LazyNumber value) {
     variables[variable] = value;
     return this;
   }
 
+  /// Sets a variable value.
+  ///
+  /// [variable] - The variable to set.
+  /// [value] - The variable value.
+  /// Returns the expression, allows to chain methods.
   Expression setStringVariable(String variable, String value) {
     if (isNumber(value)) {
       variables[variable] = createLazyNumber(Decimal.parse(value));
@@ -450,6 +528,10 @@ class Expression {
     return this;
   }
 
+  /// Creates a new inner expression for nested expression.
+  ///
+  /// [expression] The string expression.
+  /// Returns the inner Expression instance.
   Expression _createEmbeddedExpression(final String expression) {
     final Map<String, LazyNumber> outerVariables = variables;
     final Map<String, ILazyFunction> outerFunctions = functions;
@@ -461,12 +543,20 @@ class Expression {
     return exp;
   }
 
+  /// Get an iterator for this expression, allows iterating over an expression token by token.
+  ///
+  /// Returns a new iterator instance for this expression.
   Iterator<Token> getExpressionTokenizer() {
     final String expression = this._expressionString;
 
     return _Tokenizer(this, expression);
   }
 
+  /// Cached access to the RPN notation of this expression, ensures only one calculation of the RPN
+  /// per expression instance. If no cached instance exists, a new one will be created and put to the
+  /// cache.
+  ///
+  /// Returns the cached RPN instance.
   List<Token> getRPN() {
     if (_rpn == null) {
       _rpn = _shuntingYard(this._expressionString);
@@ -475,6 +565,8 @@ class Expression {
     return _rpn;
   }
 
+  /// Check that the expression has enough numbers and variables to fit the requirements of the
+  /// operators and functions, also check for only 1 result stored at the end of the evaluation.
   void _validate(List<Token> rpn) {
     // Thanks to Norman Ramsey:
     // http://http://stackoverflow.com/questions/789847/postfix-notation-validation
@@ -547,6 +639,9 @@ class Expression {
     }
   }
 
+  /// Get a string representation of the RPN (Reverse Polish Notation) for this expression.
+  ///
+  /// Returns a string with the RPN representation for this expression.
   String toRPN() {
     String result = "";
     for (Token t in getRPN()) {
@@ -573,6 +668,11 @@ class Expression {
     return result.toString();
   }
 
+  /// Checks whether the expression is a boolean expression. An expression is considered a boolean
+  /// expression, if the last operator or function is boolean. The IF function is handled special. If
+  /// the third parameter is boolean, then the IF is also considered boolean, else non-boolean.
+  ///
+  /// Returns `true` if the last operator/function was a boolean.
   bool isBoolean() {
     List<Token> rpnList = getRPN();
     if (rpnList.isNotEmpty) {
@@ -597,30 +697,41 @@ class Expression {
     return false;
   }
 
+  /// Returns a list of the variables in the expression.
+  ///
+  /// Returns a list of the variable names in this expression.
   List<String> getUsedVariables() {
     List<String> result = List();
     _Tokenizer tokenizer = new _Tokenizer(this, _expressionString);
     while (tokenizer.moveNext()) {
       Token nextToken = tokenizer.current;
       String token = nextToken.toString();
-      if (nextToken.type != TokenType.variable || token == "PI" || token == "e" || token
-          == "TRUE"
-          || token == "FALSE") {
+      if (nextToken.type != TokenType.variable ||
+          token == "PI" ||
+          token == "e" ||
+          token == "TRUE" ||
+          token == "FALSE") {
         continue;
       }
       result.add(token);
     }
     return result;
   }
-
+  /// Exposing declared operators in the expression.
+  ///
+  /// Returns all declared operators.
   Iterable<String> getDeclaredOperators() {
     return operators.keys;
   }
-
+  /// Exposing declared variables in the expression.
+  ///
+  /// Returns all declared variables.
   Iterable<String> getDeclaredVariables() {
     return variables.keys;
   }
-
+  /// Exposing declared functions.
+  ///
+  /// Returns all declared functions.
   Iterable<String> getDeclaredFunctions() {
     return functions.keys;
   }
@@ -645,6 +756,7 @@ class LazyNumberImpl extends LazyNumber {
   }
 }
 
+/// The expression evaluators exception class.
 class ExpressionException implements Exception {
   final String msg;
 
@@ -657,6 +769,7 @@ class ExpressionException implements Exception {
   String toString() => "ExpressionException: $msg";
 }
 
+/// LazyNumber interface created for lazily evaluated functions
 abstract class LazyNumber {
   Decimal eval();
 
@@ -695,6 +808,8 @@ class Token {
   }
 }
 
+/// Expression tokenizer that allows to iterate over a {@link String} expression token by token.
+/// Blank characters will be skipped.
 class _Tokenizer extends Iterator<Token> {
   final List<String> _hexDigits = [
     'x',
@@ -718,12 +833,21 @@ class _Tokenizer extends Iterator<Token> {
 
   Expression _expression;
 
+  /// Actual position in expression string.
   int pos = 0;
+  /// The original input expression.
   String input;
+  /// The previous token or <code>null</code> if none.
   Token previousToken;
 
+  /// Creates a new tokenizer for an expression.
+  ///
+  /// [input] The expression string.
   _Tokenizer(this._expression, String input) : input = input.trim();
 
+  /// Peek at the next character, without advancing the iterator.
+  ///
+  /// Returns the next character or character 0, if at end of string.
   String peekNextChar() {
     if (pos < (input.length - 1)) {
       return input[pos + 1];
@@ -757,19 +881,25 @@ class _Tokenizer extends Iterator<Token> {
 
     bool isHex = false;
 
-    if (isDigit(ch) || (ch == Expression._decimalSeparator && isDigit(peekNextChar()))) {
+    if (isDigit(ch) ||
+        (ch == Expression._decimalSeparator && isDigit(peekNextChar()))) {
       if (ch == '0' && (peekNextChar() == 'x' || peekNextChar() == 'X')) {
         isHex = true;
       }
-      while ((isHex && isHexDigit(ch))
-          || (isDigit(ch) || ch == Expression._decimalSeparator || ch == 'e' || ch == 'E'
-              || (ch == Expression._minusSign && token.length() > 0
-                  && ('e' == token.charAt(token.length() - 1)
-                      || 'E' == token.charAt(token.length() - 1)))
-              || (ch == '+' && token.length() > 0
-                  && ('e' == token.charAt(token.length() - 1)
-                      || 'E' == token.charAt(token.length() - 1))))
-              && (pos < input.length)) {
+      while ((isHex && isHexDigit(ch)) ||
+          (isDigit(ch) ||
+                  ch == Expression._decimalSeparator ||
+                  ch == 'e' ||
+                  ch == 'E' ||
+                  (ch == Expression._minusSign &&
+                      token.length() > 0 &&
+                      ('e' == token.charAt(token.length() - 1) ||
+                          'E' == token.charAt(token.length() - 1))) ||
+                  (ch == '+' &&
+                      token.length() > 0 &&
+                      ('e' == token.charAt(token.length() - 1) ||
+                          'E' == token.charAt(token.length() - 1)))) &&
+              (pos < input.length)) {
         token.append(input[pos++]);
         ch = pos == input.length ? "" : input[pos];
       }
@@ -787,8 +917,12 @@ class _Tokenizer extends Iterator<Token> {
         return moveNext();
       }
     } else if (isLetter(ch) || _expression._firstVarChars.indexOf(ch) >= 0) {
-      while ((isLetter(ch) || isDigit(ch) || _expression._varChars.indexOf(ch) >= 0
-          || token.length() == 0 && _expression._firstVarChars.indexOf(ch) >= 0) && (pos < input.length)) {
+      while ((isLetter(ch) ||
+              isDigit(ch) ||
+              _expression._varChars.indexOf(ch) >= 0 ||
+              token.length() == 0 &&
+                  _expression._firstVarChars.indexOf(ch) >= 0) &&
+          (pos < input.length)) {
         token.append(input[pos++]);
         ch = pos == input.length ? "" : input[pos];
       }
@@ -821,9 +955,14 @@ class _Tokenizer extends Iterator<Token> {
       int initialPos = pos;
       ch = input[pos];
       int validOperatorSeenUntil = -1;
-      while (!isLetter(ch) && !isDigit(ch) && _expression._firstVarChars.indexOf(ch) < 0
-          && !isWhitespace(ch) && ch != '(' && ch != ')' && ch != ','
-          && (pos < input.length)) {
+      while (!isLetter(ch) &&
+          !isDigit(ch) &&
+          _expression._firstVarChars.indexOf(ch) < 0 &&
+          !isWhitespace(ch) &&
+          ch != '(' &&
+          ch != ')' &&
+          ch != ',' &&
+          (pos < input.length)) {
         greedyMatch += ch;
         pos++;
         if (_expression.operators.containsKey(greedyMatch)) {
@@ -838,9 +977,11 @@ class _Tokenizer extends Iterator<Token> {
         token.append(greedyMatch);
       }
 
-      if (previousToken == null || previousToken.type == TokenType.operator
-          || previousToken.type == TokenType.openParen || previousToken.type == TokenType.comma
-          || previousToken.type == TokenType.unaryOperator) {
+      if (previousToken == null ||
+          previousToken.type == TokenType.operator ||
+          previousToken.type == TokenType.openParen ||
+          previousToken.type == TokenType.comma ||
+          previousToken.type == TokenType.unaryOperator) {
         token.surface += "u";
         token.type = TokenType.unaryOperator;
       } else {

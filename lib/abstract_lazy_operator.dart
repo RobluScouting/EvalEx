@@ -26,12 +26,22 @@
 
 import 'lazy_operator.dart';
 
+/// Abstract implementation of an operator.
 abstract class AbstractLazyOperator implements ILazyOperator {
+  /// This operators name (pattern).
   String oper;
+  /// Operators precedence.
   int precedence;
+  /// Operator is left associative.
   bool leftAssoc;
+  /// Whether this operator is boolean or not.
   bool booleanOperator;
-
+  /// Creates a new operator.
+  ///
+  /// [oper] - The operator name (pattern).
+  /// [precedence] - The operators precedence.
+  /// [leftAssoc] - `true` if the operator is left associative, else `false`.
+  /// [booleanOperator] - Whether this operator is boolean.
   AbstractLazyOperator(this.oper, this.precedence, this.leftAssoc,
       {this.booleanOperator = false});
 

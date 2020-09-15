@@ -144,6 +144,7 @@ void main() {
     expect(Expression("3^2").eval().toString(), "9");
     expect(Expression("2.5^2").eval().toString(), "6.25");
     expect(Expression("2.6^3.5").eval().toString(), "28.34044843681906296");
+    expect(Expression("PI^2").eval().toStringAsPrecision(128), "9.8696044010893586188344909998761511353136994072407906264133493762200448224192052430017734037185522313078742635808502091666098354");
   });
 
   test("testSqrt", () {

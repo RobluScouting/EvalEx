@@ -27,6 +27,12 @@
 import 'package:decimal/decimal.dart';
 import 'package:eval_ex/lazy_operator.dart';
 
+/// Base interface which is required for all operators.
 abstract class IOperator extends ILazyOperator {
+  /// Implementation for this operator.
+  ///
+  /// [v1] - Operand 1.
+  /// [v2] - Operand 2.
+  /// Returns the result of the operation.
   Decimal eval(Decimal v1, Decimal v2);
 }

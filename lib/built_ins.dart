@@ -45,8 +45,8 @@ void addBuiltIns(Expression e) {
 
   e.addOperator(OperatorImpl("-", Expression.operatorPrecedenceAdditive, true,
       fEval: (v1, v2) {
-        assert(v1 != null, "First operand may not be null");
-        assert(v2 != null, "Second operand may not be null");
+    assert(v1 != null, "First operand may not be null");
+    assert(v2 != null, "Second operand may not be null");
     return v1 - v2;
   }));
 
@@ -73,8 +73,8 @@ void addBuiltIns(Expression e) {
 
   e.addOperator(
       OperatorImpl("^", e.powerOperatorPrecedence, false, fEval: (v1, v2) {
-        assert(v1 != null, "First operand may not be null");
-        assert(v2 != null, "Second operand may not be null");
+    assert(v1 != null, "First operand may not be null");
+    assert(v2 != null, "Second operand may not be null");
 
     // Thanks to Gene Marin:
     // http://stackoverflow.com/questions/3579779/how-to-do-a-fractional-power-on-bigdecimal-in-java
@@ -245,7 +245,7 @@ void addBuiltIns(Expression e) {
 
     int number = params.first.toInt();
     Decimal factorial = Decimal.one;
-    for(int i = 1; i <= number; i++) {
+    for (int i = 1; i <= number; i++) {
       factorial = factorial * Decimal.fromInt(i);
     }
     return factorial;
@@ -369,7 +369,7 @@ void addBuiltIns(Expression e) {
   e.addFunc(FunctionImpl("ACOTR", 1, fEval: (params) {
     assert(params.first != null, "Operand may not be null.");
 
-    if(params.first.toDouble() == 0) {
+    if (params.first.toDouble() == 0) {
       throw new ExpressionException("Number must not be 0");
     }
 
@@ -407,7 +407,7 @@ void addBuiltIns(Expression e) {
   e.addFunc(FunctionImpl("ACOT", 1, fEval: (params) {
     assert(params.first != null, "Operand may not be null.");
 
-    if(params.first.toDouble() == 0.0) {
+    if (params.first.toDouble() == 0.0) {
       throw new ExpressionException("Number must not be 0");
     }
 
@@ -418,7 +418,8 @@ void addBuiltIns(Expression e) {
   e.addFunc(FunctionImpl("ATAN2", 2, fEval: (params) {
     assert(params[0] != null, "First operand may not be null");
     assert(params[1] != null, "Second operand may not be null");
-    double d = radsToDegrees(math.atan2(params[0].toDouble(), params[1].toDouble()));
+    double d =
+        radsToDegrees(math.atan2(params[0].toDouble(), params[1].toDouble()));
     return Decimal.parse(d.toString());
   }));
 
@@ -436,13 +437,13 @@ void addBuiltIns(Expression e) {
   }));
 
   e.addFunc(FunctionImpl("MAX", -1, fEval: (params) {
-    if(params.isEmpty) {
+    if (params.isEmpty) {
       throw new ExpressionException("MAX requires at least one parameter");
     }
     Decimal max;
-    for(Decimal param in params) {
+    for (Decimal param in params) {
       assert(param != null, "Param may not be null");
-      if(max == null || param.compareTo(max) > 0) {
+      if (max == null || param.compareTo(max) > 0) {
         max = param;
       }
     }
@@ -451,13 +452,13 @@ void addBuiltIns(Expression e) {
   }));
 
   e.addFunc(FunctionImpl("MIN", -1, fEval: (params) {
-    if(params.isEmpty) {
+    if (params.isEmpty) {
       throw new ExpressionException("MIN requires at least one parameter");
     }
     Decimal min;
-    for(Decimal param in params) {
+    for (Decimal param in params) {
       assert(param != null, "Param may not be null");
-      if(min == null || param.compareTo(min) < 0) {
+      if (min == null || param.compareTo(min) < 0) {
         min = param;
       }
     }
@@ -504,7 +505,6 @@ void addBuiltIns(Expression e) {
   e.addFunc(FunctionImpl("SQRT", 1, fEval: (params) {
     assert(params.first != null, "First operand may not be null");
 
-    // TODO need better implementation
     return Decimal.parse(math.sqrt(params.first.toDouble()).toString());
   }));
 
@@ -544,7 +544,8 @@ class UnaryOperatorImpl extends AbstractUnaryOperator {
 class FunctionImpl extends AbstractFunction {
   Function(List<Decimal>) fEval;
 
-  FunctionImpl(String name, int numParams, {bool booleanFunction = false, this.fEval})
+  FunctionImpl(String name, int numParams,
+      {bool booleanFunction = false, this.fEval})
       : super(name, numParams, booleanFunction: booleanFunction);
 
   @override
@@ -556,7 +557,8 @@ class FunctionImpl extends AbstractFunction {
 class LazyFunctionImpl extends AbstractLazyFunction {
   Function(List<LazyNumber>) fEval;
 
-  LazyFunctionImpl(String name, int numParams, {bool booleanFunction = false, this.fEval})
+  LazyFunctionImpl(String name, int numParams,
+      {bool booleanFunction = false, this.fEval})
       : super(name, numParams, booleanFunction: booleanFunction);
 
   @override

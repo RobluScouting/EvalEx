@@ -29,31 +29,37 @@ import 'package:eval_ex/abstract_operator.dart';
 
 import 'expression.dart';
 
+/// Abstract implementation of an unary operator.<br>
+/// This abstract implementation implements eval so that it forwards its first
+/// parameter to evalUnary.
 abstract class AbstractUnaryOperator extends AbstractOperator {
-  AbstractUnaryOperator(String oper, int precedence, bool leftAssoc) :
-      super(oper, precedence, leftAssoc);
+  /// Creates a new operator.
+  ///
+  /// [oper] - The operator name (pattern).
+  /// [precedence] - The operators precedence.
+  /// [leftAssoc] - `true` if the operator is left associative, else `false<`
+  AbstractUnaryOperator(String oper, int precedence, bool leftAssoc)
+      : super(oper, precedence, leftAssoc);
 
   @override
   LazyNumber evalLazy(final LazyNumber v1, final LazyNumber v2) {
-    if(v2 != null) {
-      throw ExpressionException("Did not expect a second parameter for unary operator");
+    if (v2 != null) {
+      throw ExpressionException(
+          "Did not expect a second parameter for unary operator");
     }
 
-    return LazyNumberImpl(
-      eval: () {
-        return evalUnary(v1.eval());
-      },
-      getString: () {
-        return evalUnary(v1.eval()).toString();
-      }
-    );
+    return LazyNumberImpl(eval: () {
+      return evalUnary(v1.eval());
+    }, getString: () {
+      return evalUnary(v1.eval()).toString();
+    });
   }
-
 
   @override
   Decimal eval(Decimal v1, Decimal v2) {
-    if(v2 != null) {
-      throw ExpressionException("Did not expect a second parameter for unary operator");
+    if (v2 != null) {
+      throw ExpressionException(
+          "Did not expect a second parameter for unary operator");
     }
 
     return evalUnary(v1);
