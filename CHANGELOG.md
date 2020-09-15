@@ -1,3 +1,6 @@
+## [1.0.1] - 9/15/2020
+Added examples and fixed formatting.
+
 ## [1.0.0] - 9/15/2020
 Initial port of https://github.com/uklimaschewski/EvalEx.  
 Differences in implementation currently:
