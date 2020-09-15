@@ -522,7 +522,7 @@ void addBuiltIns(Expression e) {
     return Decimal.parse(math.sqrt(params.first.toDouble()).toString());
   }));
 
-  e.variables["the answer to life, the universe, and everything"] =
+  e.variables["theAnswerToLifeTheUniverseAndEverything"] =
       e.createLazyNumber(Decimal.fromInt(42));
 
   e.variables["e"] = e.createLazyNumber(Expression.e);

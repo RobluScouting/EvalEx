@@ -1,3 +1,6 @@
+## [1.0.6] - 9/15/2020
+Typo spelling fix
+
 ## [1.0.5] - 9/15/2020
 Typo spelling fix
 
