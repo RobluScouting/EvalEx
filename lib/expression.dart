@@ -30,22 +30,21 @@ import 'dart:core';
 import 'package:decimal/decimal.dart';
 import 'package:eval_ex/abstract_unary_operator.dart';
 import 'package:eval_ex/built_ins.dart';
-import 'package:eval_ex/expression_settings.dart';
 import 'package:eval_ex/func.dart';
 import 'package:eval_ex/lazy_function.dart';
 import 'package:eval_ex/lazy_operator.dart';
 import 'package:eval_ex/utils.dart';
 
 class Expression {
-  static final int operatorPrecedenceUnary = 60;
-  static final int operatorPrecedenceEquality = 7;
-  static final int operatorPrecedenceComparison = 10;
-  static final int operatorPrecedenceOr = 2;
-  static final int operatorPrecedenceAnd = 4;
-  static final int operatorPrecedencePower = 40;
-  static final int operatorPrecedencePowerHigher = 80;
-  static final int operatorPrecedenceMultiplicative = 30;
-  static final int operatorPrecedenceAdditive = 20;
+  static const int operatorPrecedenceUnary = 60;
+  static const int operatorPrecedenceEquality = 7;
+  static const int operatorPrecedenceComparison = 10;
+  static const int operatorPrecedenceOr = 2;
+  static const int operatorPrecedenceAnd = 4;
+  static const int operatorPrecedencePower = 40;
+  static const int operatorPrecedencePowerHigher = 80;
+  static const int operatorPrecedenceMultiplicative = 30;
+  static const int operatorPrecedenceAdditive = 20;
 
   static final Decimal pi = Decimal.parse(
       "3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679");
@@ -90,16 +89,13 @@ class Expression {
   }
 
   Expression(String expression)
-      : this.withExpressionSettings(
-            expression, ExpressionSettings.builder().build());
+      : this.withExpressionSettings(expression);
 
   Expression.withExpressionSettings(
-      String expression, ExpressionSettings expressionSettings)
+      String expression, {this.powerOperatorPrecedence = Expression.operatorPrecedencePower})
       : _expressionString = expression,
         _originalExpression = expression {
-    this.powerOperatorPrecedence =
-        expressionSettings.getPowerOperatorPrecedence();
-
+    
     addBuiltIns(this);
   }
 
