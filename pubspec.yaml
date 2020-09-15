@@ -1,8 +1,7 @@
 name: eval_ex
-description: A mathematical and logical expression evaluator.
-version: 0.0.1
-author:
-homepage:
+description: A mathematical and boolean expression evaluator.
+version: 1.0.0
+homepage: https://github.com/RobluScouting/EvalEx
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
