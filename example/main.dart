@@ -24,48 +24,29 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import 'lazy_operator.dart';
+import 'package:eval_ex/expression.dart';
 
-/// Abstract implementation of an operator.
-abstract class AbstractLazyOperator implements ILazyOperator {
-  /// This operators name (pattern).
-  String oper;
+void main() {
+  Expression exp = Expression("2 ^ 4 + 8");
+  print(exp.eval().toString()); // 24
 
-  /// Operators precedence.
-  int precedence;
+  // With a variable
+  exp = Expression("a ^ b + c");
+  // Variables may contain alphanumeric characters, and "_". This can be changed
+  // by using setVariableCharacters(..) and setFirstVariableCharacters(..) (what chars variable are allowed to start with).
+  exp.setStringVariable("a", "2");
+  exp.setStringVariable("b", "4");
+  exp.setStringVariable("c", "8");
+  print(exp.eval().toString()); // 24
 
-  /// Operator is left associative.
-  bool leftAssoc;
+  // With a function
+  exp = Expression("MAX(-7,8)");
+  print(exp.eval().toString()); // 8
 
-  /// Whether this operator is boolean or not.
-  bool booleanOperator;
+  // Boolean logic
+  exp = Expression("1>0 && 5 == 5");
+  print(exp.eval().toString()); // 1
 
-  /// Creates a new operator.
-  ///
-  /// [oper] - The operator name (pattern).
-  /// [precedence] - The operators precedence.
-  /// [leftAssoc] - `true` if the operator is left associative, else `false`.
-  /// [booleanOperator] - Whether this operator is boolean.
-  AbstractLazyOperator(this.oper, this.precedence, this.leftAssoc,
-      {this.booleanOperator = false});
-
-  @override
-  String getOper() {
-    return oper;
-  }
-
-  @override
-  int getPrecedence() {
-    return precedence;
-  }
-
-  @override
-  bool isLeftAssoc() {
-    return leftAssoc;
-  }
-
-  @override
-  bool isBooleanOperator() {
-    return booleanOperator;
-  }
+  exp = Expression("1>0 && 5 == 4");
+  print(exp.eval().toString()); // 0
 }

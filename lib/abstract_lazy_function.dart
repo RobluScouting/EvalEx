@@ -31,9 +31,11 @@ import 'lazy_function.dart';
 abstract class AbstractLazyFunction implements ILazyFunction {
   /// Name of this function.
   String name;
+
   /// Number of parameters expected for this function. <code>-1</code>
   /// denotes a variable number of parameters.
   int numParams;
+
   /// Whether this function is a boolean function.
   bool booleanFunction;
 
