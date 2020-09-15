@@ -1,3 +1,6 @@
+## [1.0.7] - 9/15/2020
+Made error text more consistent for "^"
+
 ## [1.0.6] - 9/15/2020
 Typo spelling fix
 

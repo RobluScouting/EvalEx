@@ -80,9 +80,9 @@ void addBuiltIns(Expression e) {
     // should be canned
     double test = math.pow(v1.toDouble(), v2.toDouble());
     if (test.isInfinite) {
-      throw new ExpressionException("Exponentiation too expensive.");
+      throw new ExpressionException("Exponentiation too expensive");
     } else if (test.isNaN) {
-      throw new ExpressionException("Exponentiation invalid.");
+      throw new ExpressionException("Exponentiation invalid");
     }
 
     // Thanks to Gene Marin:
