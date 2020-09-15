@@ -1,4 +1,7 @@
-## [1.0.3] - 9/15/2020
+## [1.0.5] - 9/15/2020
+Typo spelling fix
+
+## [1.0.4] - 9/15/2020
 Switch assert errors for safeguards for "^" and "FACT" to ExpressionExceptions
 
 ## [1.0.3] - 9/15/2020

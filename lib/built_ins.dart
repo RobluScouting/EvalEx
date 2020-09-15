@@ -529,7 +529,7 @@ void addBuiltIns(Expression e) {
   e.variables["PI"] = e.createLazyNumber(Expression.pi);
   e.variables["NULL"] = null;
   e.variables["TRUE"] = e.createLazyNumber(Decimal.one);
-  e.variables["ALSE"] = e.createLazyNumber(Decimal.zero);
+  e.variables["FALSE"] = e.createLazyNumber(Decimal.zero);
 }
 
 class OperatorImpl extends AbstractOperator {
