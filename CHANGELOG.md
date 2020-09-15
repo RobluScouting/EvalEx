@@ -1,3 +1,6 @@
+## [1.0.2] - 9/15/2020
+Fixed formatting
+
 ## [1.0.1] - 9/15/2020
 Added examples and fixed formatting.
 

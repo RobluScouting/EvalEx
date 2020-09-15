@@ -124,7 +124,6 @@ class Expression {
   Expression(String expression,
       {this.powerOperatorPrecedence = Expression.operatorPrecedencePower})
       : _expressionString = expression {
-
     addBuiltIns(this);
   }
 
@@ -717,18 +716,21 @@ class Expression {
     }
     return result;
   }
+
   /// Exposing declared operators in the expression.
   ///
   /// Returns all declared operators.
   Iterable<String> getDeclaredOperators() {
     return operators.keys;
   }
+
   /// Exposing declared variables in the expression.
   ///
   /// Returns all declared variables.
   Iterable<String> getDeclaredVariables() {
     return variables.keys;
   }
+
   /// Exposing declared functions.
   ///
   /// Returns all declared functions.
@@ -835,8 +837,10 @@ class _Tokenizer extends Iterator<Token> {
 
   /// Actual position in expression string.
   int pos = 0;
+
   /// The original input expression.
   String input;
+
   /// The previous token or <code>null</code> if none.
   Token previousToken;
 
