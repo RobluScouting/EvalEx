@@ -1,4 +1,7 @@
 ## [1.0.3] - 9/15/2020
+Switch assert errors for safeguards for "^" and "FACT" to ExpressionExceptions
+
+## [1.0.3] - 9/15/2020
 Added safeguards for "^" and "FACT" on really large numbers so they don't
 kill evaluation performance.
 

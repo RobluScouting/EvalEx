@@ -79,8 +79,11 @@ void addBuiltIns(Expression e) {
     // Do an more high performance estimate to see if this should be request
     // should be canned
     double test = math.pow(v1.toDouble(), v2.toDouble());
-    assert(!test.isInfinite, "Exponentiation too expensive.");
-    assert(!test.isNaN, "Exponentiation invalid.");
+    if (test.isInfinite) {
+      throw new ExpressionException("Exponentiation too expensive.");
+    } else if (test.isNaN) {
+      throw new ExpressionException("Exponentiation invalid.");
+    }
 
     // Thanks to Gene Marin:
     // http://stackoverflow.com/questions/3579779/how-to-do-a-fractional-power-on-bigdecimal-in-java
@@ -248,7 +251,10 @@ void addBuiltIns(Expression e) {
 
   e.addFunc(FunctionImpl("FACT", 1, booleanFunction: false, fEval: (params) {
     assert(params.first != null, "Operand may not be null");
-    assert(params.first.toDouble() <= 50, "Operand must be less than 50");
+
+    if (params.first.toDouble() > 50) {
+      throw new ExpressionException("Operand must be <= 50");
+    }
 
     int number = params.first.toInt();
 
@@ -523,7 +529,7 @@ void addBuiltIns(Expression e) {
   e.variables["PI"] = e.createLazyNumber(Expression.pi);
   e.variables["NULL"] = null;
   e.variables["TRUE"] = e.createLazyNumber(Decimal.one);
-  e.variables["FALSE"] = e.createLazyNumber(Decimal.zero);
+  e.variables["ALSE"] = e.createLazyNumber(Decimal.zero);
 }
 
 class OperatorImpl extends AbstractOperator {
