@@ -325,7 +325,7 @@ class Expression {
           stack.addFirst(LazyNumberImpl(eval: () {
             LazyNumber lazyVariable = variables[token.surface];
             Decimal value = lazyVariable == null ? null : lazyVariable.eval();
-            return value == null ? null : value.round();
+            return value;
           }, getString: () {
             return token.surface;
           }));
@@ -599,6 +599,34 @@ class Expression {
       }
     }
     return false;
+  }
+
+  List<String> getUsedVariables() {
+    List<String> result = List();
+    _Tokenizer tokenizer = new _Tokenizer(this, _expressionString);
+    while (tokenizer.moveNext()) {
+      Token nextToken = tokenizer.current;
+      String token = nextToken.toString();
+      if (nextToken.type != TokenType.variable || token == "PI" || token == "e" || token
+          == "TRUE"
+          || token == "FALSE") {
+        continue;
+      }
+      result.add(token);
+    }
+    return result;
+  }
+
+  Iterable<String> getDeclaredOperators() {
+    return operators.keys;
+  }
+
+  Iterable<String> getDeclaredVariables() {
+    return variables.keys;
+  }
+
+  Iterable<String> getDeclaredFunctions() {
+    return functions.keys;
   }
 }
 

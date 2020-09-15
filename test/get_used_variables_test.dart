@@ -24,33 +24,31 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import 'lazy_function.dart';
+import 'package:eval_ex/expression.dart';
+import 'package:flutter_test/flutter_test.dart';
 
-abstract class AbstractLazyFunction implements ILazyFunction {
-  String name;
-  int numParams;
-  bool booleanFunction;
+void main() {
+  test("testVars", () {
+    Expression ex = new Expression("a/2*PI+MIN(e,b)");
+    List<String> usedVars = ex.getUsedVariables();
 
-  AbstractLazyFunction(String name, this.numParams, {this.booleanFunction = false}) : name = name.toUpperCase();
+    expect(usedVars.length, 2);
+    expect(usedVars.contains("a"), true);
+    expect(usedVars.contains("b"), true);
+  });
 
-  @override
-  String getName() {
-    return name;
-  }
+  test("testVarsLongNames", () {
+    Expression ex = new Expression("var1/2*PI+MIN(var2,var3)");
+    List<String> usedVars = ex.getUsedVariables();
+    expect(usedVars.length, 3);
+    expect(usedVars.contains("var1"), true);
+    expect(usedVars.contains("var2"), true);
+    expect(usedVars.contains("var3"), true);
+  });
 
-  @override
-  int getNumParams() {
-    return numParams;
-  }
-
-  @override
-  bool numParamsVaries() {
-    return numParams < 0;
-  }
-
-  @override
-  bool isBooleanFunction() {
-    return booleanFunction;
-  }
-
+  test("testVarsNothing", () {
+    Expression ex = new Expression("1/2");
+    List<String> usedVars = ex.getUsedVariables();
+    expect(usedVars.length, 0);
+  });
 }

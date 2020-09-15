@@ -228,16 +228,20 @@ void addBuiltIns(Expression e) {
 
   e.addOperator(UnaryOperatorImpl(
       "-", Expression.operatorPrecedenceUnary, false, fEval: (v1) {
+    assert(v1 != null, "Operand may not be null");
+
     return v1 * Decimal.fromInt(-1);
   }));
 
   e.addOperator(UnaryOperatorImpl(
       "+", Expression.operatorPrecedenceUnary, false, fEval: (v1) {
+    assert(v1 != null, "Operand may not be null");
+
     return v1 * Decimal.one;
   }));
 
   e.addFunc(FunctionImpl("FACT", 1, booleanFunction: false, fEval: (params) {
-    assert(params.first != null);
+    assert(params.first != null, "Operand may not be null");
 
     int number = params.first.toInt();
     Decimal factorial = Decimal.one;
@@ -248,7 +252,7 @@ void addBuiltIns(Expression e) {
   }));
 
   e.addFunc(FunctionImpl("NOT", 1, booleanFunction: true, fEval: (params) {
-    assert(params.first != null);
+    assert(params.first != null, "Operand may not be null");
 
     bool zero = params.first.compareTo(Decimal.zero) == 0;
     return zero ? Decimal.one : Decimal.zero;

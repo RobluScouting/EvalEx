@@ -26,22 +26,43 @@
 
 import 'package:decimal/decimal.dart';
 import 'package:eval_ex/expression.dart';
+import 'package:flutter_test/flutter_test.dart';
 
-class LazyIfNumber implements LazyNumber {
-  List<LazyNumber> _lazyParams;
+void main() {
+  test("testLazyIf", () {
+    Expression expression = new Expression("if(a=0,0,12/a)")
+      ..setDecimalVariable("a", Decimal.zero);
+    expect(expression.eval(), Decimal.zero);
+  });
 
-  LazyIfNumber(this._lazyParams);
+  test("testLazyIfWithNestedFunctions", () {
+    Expression expression = new Expression("if(a=0,0,abs(12/a))")
+      ..setDecimalVariable("a", Decimal.zero);
+    expect(expression.eval(), Decimal.zero);
+  });
 
-  @override
-  Decimal eval() {
-    Decimal result = _lazyParams[0].eval();
-    assert(result != null, "Operand may not be null");
-    bool isTrue = result.compareTo(Decimal.zero) != 0;
-    return isTrue ? _lazyParams[1].eval() : _lazyParams[2].eval();
-  }
+  test("testLazyIfWithNestedSuccessIf", () {
+    Expression expression = new Expression("if(a=0,0,if(5/a>3,2,4))")
+      ..setDecimalVariable("a", Decimal.zero);
+    expect(expression.eval(), Decimal.zero);
+  });
 
-  @override
-  String getString() {
-    return _lazyParams[0].getString();
-  }
+  test("testLazyIfWithNestedFailingIf()", () {
+    Expression expression = new Expression("if(a=0,if(5/a>3,2,4),0)")
+      ..setDecimalVariable("a", Decimal.zero);
+
+    expect(() => expression.eval(), throwsA(isInstanceOf<ArgumentError>()));
+  });
+
+  test("testLazyIfWithNull", () {
+    String err = "";
+
+    try {
+      new Expression("if(a,0,12/a)")..setStringVariable("a", "null").eval();
+    } on AssertionError catch(e) {
+      err = e.message;
+    }
+
+    expect(err, "Operand may not be null");
+  });
 }
