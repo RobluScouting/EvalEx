@@ -1,5 +1,31 @@
+/*
+ * Copyright 2012-2020 Udo Klimaschewski
+ *
+ * http://about.me/udo.klimaschewski
+ * http://UdoJava.com/
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 import 'package:eval_ex/expression.dart';
-import 'package:test/test.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 void assertToken(String surface, TokenType type, Token actual) {
   expect(actual.surface, surface);
@@ -94,43 +120,43 @@ void main() {
   });
 
   test('testCompareCombined', () {
-    expect(new Expression("(2>1)||(1=0)").eval().toString(), "1");
-    expect(new Expression("(2>3)||(1=0)").eval().toString(), "0");
-    expect(new Expression("(2>3)||(1=0)||(1&&1)").eval().toString(), "1");
+    expect(Expression("(2>1)||(1=0)").eval().toString(), "1");
+    expect(Expression("(2>3)||(1=0)").eval().toString(), "0");
+    expect(Expression("(2>3)||(1=0)||(1&&1)").eval().toString(), "1");
   });
 
   test('testMixed', () {
-    expect(new Expression("1.5 * 7 = 3").eval().toString(), "0");
-    expect(new Expression("1.5 * 7 = 10.5").eval().toString(), "1");
+    expect(Expression("1.5 * 7 = 3").eval().toString(), "0");
+    expect(Expression("1.5 * 7 = 10.5").eval().toString(), "1");
   });
 
   test('testNot', () {
-    expect(new Expression("not(1)").eval().toString(), "0");
-    expect(new Expression("not(0)").eval().toString(), "1");
-    expect(new Expression("not(1.5 * 7 = 3)").eval().toString(), "1");
-    expect(new Expression("not(1.5 * 7 = 10.5)").eval().toString(), "0");
+    expect(Expression("not(1)").eval().toString(), "0");
+    expect(Expression("not(0)").eval().toString(), "1");
+    expect(Expression("not(1.5 * 7 = 3)").eval().toString(), "1");
+    expect(Expression("not(1.5 * 7 = 10.5)").eval().toString(), "0");
   });
 
   test('testConstants', () {
-    expect(new Expression("TRUE!=FALSE").eval().toString(), "1");
-    expect(new Expression("TRUE==2").eval().toString(), "0");
-    expect(new Expression("NOT(TRUE)==FALSE").eval().toString(), "1");
-    expect(new Expression("NOT(FALSE)==TRUE").eval().toString(), "1");
-    expect(new Expression("TRUE && FALSE").eval().toString(), "0");
-    expect(new Expression("TRUE || FALSE").eval().toString(), "1");
+    expect(Expression("TRUE!=FALSE").eval().toString(), "1");
+    expect(Expression("TRUE==2").eval().toString(), "0");
+    expect(Expression("NOT(TRUE)==FALSE").eval().toString(), "1");
+    expect(Expression("NOT(FALSE)==TRUE").eval().toString(), "1");
+    expect(Expression("TRUE && FALSE").eval().toString(), "0");
+    expect(Expression("TRUE || FALSE").eval().toString(), "1");
   });
 
   test('testIf', () {
-    expect(new Expression("if(TRUE, 5, 3)").eval().toString(), "5");
-    expect(new Expression("IF(FALSE, 5, 3)").eval().toString(), "3");
-    expect(new Expression("If(2, 5.35, 3)").eval().toString(), "5.35");
+    expect(Expression("if(TRUE, 5, 3)").eval().toString(), "5");
+    expect(Expression("IF(FALSE, 5, 3)").eval().toString(), "3");
+    expect(Expression("If(2, 5.35, 3)").eval().toString(), "5.35");
   });
 
   test("testDecimals",  () {
-    expect(new Expression("if(0.0, 1, 0)").eval().toString(), "0");
-    expect(new Expression("0.0 || 0.0").eval().toString(), "0");
-    expect(new Expression("not(0.0)").eval().toString(), "1");
-    expect(new Expression("0.0 && 0.0").eval().toString(), "0");
+    expect(Expression("if(0.0, 1, 0)").eval().toString(), "0");
+    expect(Expression("0.0 || 0.0").eval().toString(), "0");
+    expect(Expression("not(0.0)").eval().toString(), "1");
+    expect(Expression("0.0 && 0.0").eval().toString(), "0");
   });
 
 }

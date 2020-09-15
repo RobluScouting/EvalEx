@@ -38,31 +38,44 @@ import 'expression.dart';
 void addBuiltIns(Expression e) {
   e.addOperator(OperatorImpl("+", Expression.operatorPrecedenceAdditive, true,
       fEval: (v1, v2) {
+    assert(v1 != null, "First operand may not be null");
+    assert(v2 != null, "Second operand may not be null");
     return v1 + v2;
   }));
 
   e.addOperator(OperatorImpl("-", Expression.operatorPrecedenceAdditive, true,
       fEval: (v1, v2) {
+        assert(v1 != null, "First operand may not be null");
+        assert(v2 != null, "Second operand may not be null");
     return v1 - v2;
   }));
 
   e.addOperator(OperatorImpl(
       "*", Expression.operatorPrecedenceMultiplicative, true, fEval: (v1, v2) {
+    assert(v1 != null, "First operand may not be null");
+    assert(v2 != null, "Second operand may not be null");
     return v1 * v2;
   }));
 
   e.addOperator(OperatorImpl(
       "/", Expression.operatorPrecedenceMultiplicative, true, fEval: (v1, v2) {
+    assert(v1 != null, "First operand may not be null");
+    assert(v2 != null, "Second operand may not be null");
     return v1 / v2;
   }));
 
   e.addOperator(OperatorImpl(
       "%", Expression.operatorPrecedenceMultiplicative, true, fEval: (v1, v2) {
+    assert(v1 != null, "First operand may not be null");
+    assert(v2 != null, "Second operand may not be null");
     return v1 % v2;
   }));
 
   e.addOperator(
       OperatorImpl("^", e.powerOperatorPrecedence, false, fEval: (v1, v2) {
+        assert(v1 != null, "First operand may not be null");
+        assert(v2 != null, "Second operand may not be null");
+
     // Thanks to Gene Marin:
     // http://stackoverflow.com/questions/3579779/how-to-do-a-fractional-power-on-bigdecimal-in-java
     int signOf2 = v2.signum;
@@ -246,8 +259,6 @@ void addBuiltIns(Expression e) {
   }));
 
   e.addFunc(FunctionImpl("RANDOM", 0, fEval: (params) {
-    assert(params.first != null);
-
     double d = math.Random().nextDouble();
     return Decimal.parse(d.toString());
   }));
@@ -363,8 +374,8 @@ void addBuiltIns(Expression e) {
   }));
 
   e.addFunc(FunctionImpl("ATAN2R", 2, fEval: (params) {
-    assert(params[0] != null, "First operand may not be null.");
-    assert(params[1] != null, "Second operand may not be null.");
+    assert(params[0] != null, "First operand may not be null");
+    assert(params[1] != null, "Second operand may not be null");
     double d = math.atan2(params[0].toDouble(), params[1].toDouble());
     return Decimal.parse(d.toString());
   }));
@@ -385,7 +396,7 @@ void addBuiltIns(Expression e) {
 
   e.addFunc(FunctionImpl("ATAN", 1, fEval: (params) {
     assert(params.first != null, "Operand may not be null.");
-    double d = degreesToRads(math.atan(params.first.toDouble()));
+    double d = radsToDegrees(math.atan(params.first.toDouble()));
     return Decimal.parse(d.toString());
   }));
 
@@ -396,14 +407,14 @@ void addBuiltIns(Expression e) {
       throw new ExpressionException("Number must not be 0");
     }
 
-    double d = degreesToRads(math.atan(1.0 / params.first.toDouble()));
+    double d = radsToDegrees(math.atan(1.0 / params.first.toDouble()));
     return Decimal.parse(d.toString());
   }));
 
   e.addFunc(FunctionImpl("ATAN2", 2, fEval: (params) {
-    assert(params[0] != null, "First operand may not be null.");
-    assert(params[1] != null, "Second operand may not be null.");
-    double d = degreesToRads(math.atan2(params[0].toDouble(), params[1].toDouble()));
+    assert(params[0] != null, "First operand may not be null");
+    assert(params[1] != null, "Second operand may not be null");
+    double d = radsToDegrees(math.atan2(params[0].toDouble(), params[1].toDouble()));
     return Decimal.parse(d.toString());
   }));
 
@@ -422,7 +433,7 @@ void addBuiltIns(Expression e) {
 
   e.addFunc(FunctionImpl("MAX", -1, fEval: (params) {
     if(params.isEmpty) {
-      throw new ExpressionException("MAX requires at least one parameter.");
+      throw new ExpressionException("MAX requires at least one parameter");
     }
     Decimal max;
     for(Decimal param in params) {
@@ -437,7 +448,7 @@ void addBuiltIns(Expression e) {
 
   e.addFunc(FunctionImpl("MIN", -1, fEval: (params) {
     if(params.isEmpty) {
-      throw new ExpressionException("MAX requires at least one parameter.");
+      throw new ExpressionException("MIN requires at least one parameter");
     }
     Decimal min;
     for(Decimal param in params) {
@@ -455,6 +466,12 @@ void addBuiltIns(Expression e) {
     return params.first.abs();
   }));
 
+  e.addFunc(FunctionImpl("LOG", 1, fEval: (params) {
+    assert(params.first != null, "Operand may not be null.");
+    double d = math.log(params.first.toDouble());
+    return Decimal.parse(d.toString());
+  }));
+
   e.addFunc(FunctionImpl("LOG10", 1, fEval: (params) {
     assert(params.first != null, "Operand may not be null.");
     double d = log10(params.first.toDouble());
@@ -462,28 +479,29 @@ void addBuiltIns(Expression e) {
   }));
 
   e.addFunc(FunctionImpl("ROUND", 2, fEval: (params) {
-    assert(params.first != null, "First operand may not be null.");
-    assert(params[1] != null, "Second operand may not be null.");
+    assert(params.first != null, "First operand may not be null");
+    assert(params[1] != null, "Second operand may not be null");
     Decimal toRound = params.first;
     return Decimal.parse(toRound.toStringAsFixed(params[1].toInt()));
   }));
 
   e.addFunc(FunctionImpl("FLOOR", 1, fEval: (params) {
-    assert(params.first != null, "First operand may not be null.");
+    assert(params.first != null, "First operand may not be null");
 
     return params.first.floor();
   }));
 
   e.addFunc(FunctionImpl("CEILING", 1, fEval: (params) {
-    assert(params.first != null, "First operand may not be null.");
+    assert(params.first != null, "First operand may not be null");
 
     return params.first.ceil();
   }));
 
   e.addFunc(FunctionImpl("SQRT", 1, fEval: (params) {
-    assert(params.first != null, "First operand may not be null.");
+    assert(params.first != null, "First operand may not be null");
 
-    return params.first * Decimal.fromInt(2);
+    // TODO need better implementation
+    return Decimal.parse(math.sqrt(params.first.toDouble()).toString());
   }));
 
   e.variables["e"] = e.createLazyNumber(Expression.e);
