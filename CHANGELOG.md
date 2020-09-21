@@ -1,3 +1,6 @@
+## [1.0.8] - 9/15/2020
+Added STREQ function
+
 ## [1.0.7] - 9/15/2020
 Made error text more consistent for "^"
 

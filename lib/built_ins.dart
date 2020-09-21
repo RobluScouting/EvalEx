@@ -235,6 +235,14 @@ void addBuiltIns(Expression e) {
     return v1.compareTo(v2) != 0 ? Decimal.one : Decimal.zero;
   }));
 
+  e.addLazyFunction(LazyFunctionImpl("STREQ", 2, fEval: (params) {
+    if (params[0].getString() == params[1].getString()) {
+      return e.createLazyNumber(Decimal.one);
+    } else {
+      return e.createLazyNumber(Decimal.zero);
+    }
+  }));
+
   e.addOperator(UnaryOperatorImpl(
       "-", Expression.operatorPrecedenceUnary, false, fEval: (v1) {
     assert(v1 != null, "Operand may not be null");

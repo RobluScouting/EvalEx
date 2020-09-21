@@ -565,4 +565,15 @@ void main() {
     }
     expect(err, "Unexpected comma at character position 3");
   });
+
+  test("testStrEq", () {
+    Expression e = new Expression("STREQ(\"test32asd234@#\",\"test32asd234@#\")");
+    expect(e.eval().toString(), "1");
+
+    e = new Expression("STREQ(\"test\",\"test32asd234@#\")");
+    expect(e.eval().toString(), "0");
+
+    e = new Expression("STREQ(\"\",\"\")");
+    expect(e.eval().toString(), "1");
+  });
 }

@@ -1,6 +1,6 @@
 name: eval_ex
 description: A mathematical and boolean expression evaluator, ported from https://github.com/uklimaschewski/EvalEx.
-version: 1.0.7
+version: 1.0.8
 homepage: https://github.com/RobluScouting/EvalEx
 
 environment:

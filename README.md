@@ -57,6 +57,7 @@ void main() {
 | ==                   | Returns 1 if the left and right expressions are equal                             |
 | !=                   | Returns 1 if the left and right expressions are NOT equal                         |
 | <>                   | Returns 1 if the left and right expressions are NOT equal                         |
+| STREQ("str1","str2") | Returns 1 if the literal "str1" is equal to "str2", otherwise returns 0           |
 | FACT(int)            | Computes the factorial of arg1                                                    |
 | NOT(expression)      | Returns 1 if arg1 evaluates to 0, otherwise returns 0                             |
 | IF(cond,exp1,exp2)   | Returns exp1 if cond evaluates to 1, otherwise returns exp2                       |
