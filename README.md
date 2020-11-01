@@ -99,7 +99,7 @@ void main() {
 | PI                   | Ratio of circle's circumference to diameter                                       |
 | NULL                 | Alias for null                                                                    |
 | TRUE or true         | Alias for 1                                                                       |
-| FALSE or true        | Alias for 0                                                                       |
+| FALSE or false        | Alias for 0                                                                       |
 
 ## Adding custom functions, operators, and variables
 Custom functions, operators, and variables can be defined by adding them in built_ins.dart
