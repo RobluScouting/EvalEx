@@ -1,3 +1,6 @@
+## [1.0.9] - 11/16/2020
+Bug fixes to ">" and "<" operators.
+
 ## [1.0.8] - 9/15/2020
 Added STREQ function
 

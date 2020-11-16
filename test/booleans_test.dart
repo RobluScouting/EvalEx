@@ -43,9 +43,7 @@ void main() {
     e = Expression("false==FALSE");
     expect(e.eval().toString(), "1");
 
-    e = Expression("a==b")
-      ..setStringVariable("a", "1")
-      ..setStringVariable("b", "2");
+    e = Expression("a==b")..setStringVariable("a", "1")..setStringVariable("b", "2");
     expect(e.isBoolean(), true);
 
     e = new Expression("(1==1)||(c==a+b)");
@@ -83,7 +81,7 @@ void main() {
     i.moveNext();
     assertToken("1", TokenType.literal, i.current);
     i.moveNext();
-    assertToken("&&",TokenType.operator, i.current);
+    assertToken("&&", TokenType.operator, i.current);
     i.moveNext();
     assertToken("0", TokenType.literal, i.current);
   });
@@ -123,6 +121,9 @@ void main() {
     expect(Expression("1=1").eval().toString(), "1");
     expect(Expression("1!=2").eval().toString(), "1");
     expect(Expression("1!=1").eval().toString(), "0");
+    expect(Expression("16>10").eval().toString(), "1");
+    expect(Expression("16>10").eval().toString(), "1");
+    expect(Expression("10.3>10").eval().toString(), "1");
   });
 
   test('testCompareCombined', () {
@@ -158,13 +159,10 @@ void main() {
     expect(Expression("If(2, 5.35, 3)").eval().toString(), "5.35");
   });
 
-  test("testDecimals",  () {
+  test("testDecimals", () {
     expect(Expression("if(0.0, 1, 0)").eval().toString(), "0");
     expect(Expression("0.0 || 0.0").eval().toString(), "0");
     expect(Expression("not(0.0)").eval().toString(), "1");
     expect(Expression("0.0 && 0.0").eval().toString(), "0");
   });
-
 }
-
-
