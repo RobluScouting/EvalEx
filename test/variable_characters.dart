@@ -63,25 +63,42 @@ void main() {
 
     expression =
         new Expression("a.b/2*PI+MIN(e,b)").setVariableCharacters("_.");
-    expect((expression
-      ..setStringVariable("a.b", "2")..setStringVariable("b", "3"))
-          .eval().toStringAsPrecision(7), "5.859874");
+    expect(
+        (expression..setStringVariable("a.b", "2")..setStringVariable("b", "3"))
+            .eval()
+            .toStringAsPrecision(7),
+        "5.859874");
 
     try {
-    expression = new Expression(".a.b/2*PI+MIN(e,b)").setVariableCharacters("_.");
-    expression.eval();
+      expression =
+          new Expression(".a.b/2*PI+MIN(e,b)").setVariableCharacters("_.");
+      expression.eval();
     } on ExpressionException catch (e) {
-    err = e.msg;
+      err = e.msg;
     }
 
     expect(err, "Unknown unary operator . at character position 1");
 
-    expression = new Expression("a.b/2*PI+MIN(e,b)").setVariableCharacters("_.").setFirstVariableCharacters(".");
-    expect((expression..setStringVariable("a.b", "2")..setStringVariable("b", "3")).eval().toStringAsFixed(7), "5.8598745");
+    expression = new Expression("a.b/2*PI+MIN(e,b)")
+        .setVariableCharacters("_.")
+        .setFirstVariableCharacters(".");
+    expect(
+        (expression..setStringVariable("a.b", "2")..setStringVariable("b", "3"))
+            .eval()
+            .toStringAsFixed(7),
+        "5.8598745");
   });
 
   test("testFirstVarChar", () {
-    Expression expression = new Expression("a.b*\$PI").setVariableCharacters(".").setFirstVariableCharacters("\$");
-    expect((expression..setStringVariable("a.b", "2")..setStringVariable("\$PI", "3")).eval().toString(), "6");
+    Expression expression = new Expression("a.b*\$PI")
+        .setVariableCharacters(".")
+        .setFirstVariableCharacters("\$");
+    expect(
+        (expression
+              ..setStringVariable("a.b", "2")
+              ..setStringVariable("\$PI", "3"))
+            .eval()
+            .toString(),
+        "6");
   });
 }

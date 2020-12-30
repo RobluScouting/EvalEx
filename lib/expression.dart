@@ -166,7 +166,7 @@ class Expression {
   /// [expression] - The input expression in infx.
   /// Returns a RPN representation of the expression, with each token as a list member.
   List<Token> _shuntingYard(String expression) {
-    List<Token> outputQueue = List();
+    List<Token> outputQueue = [];
     ListQueue<Token> stack = ListQueue();
 
     _Tokenizer tokenizer = _Tokenizer(this, expression);
@@ -700,7 +700,7 @@ class Expression {
   ///
   /// Returns a list of the variable names in this expression.
   List<String> getUsedVariables() {
-    List<String> result = List();
+    List<String> result = [];
     _Tokenizer tokenizer = new _Tokenizer(this, _expressionString);
     while (tokenizer.moveNext()) {
       Token nextToken = tokenizer.current;

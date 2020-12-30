@@ -59,7 +59,7 @@ void main() {
 
     try {
       new Expression("if(a,0,12/a)")..setStringVariable("a", "null").eval();
-    } on AssertionError catch(e) {
+    } on AssertionError catch (e) {
       err = e.message;
     }
 

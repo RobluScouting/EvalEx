@@ -36,40 +36,43 @@ import 'abstract_unary_operator.dart';
 import 'expression.dart';
 
 void addBuiltIns(Expression e) {
-  e.addOperator(OperatorImpl("+", Expression.operatorPrecedenceAdditive, true, fEval: (v1, v2) {
+  e.addOperator(OperatorImpl("+", Expression.operatorPrecedenceAdditive, true,
+      fEval: (v1, v2) {
     assert(v1 != null, "First operand may not be null");
     assert(v2 != null, "Second operand may not be null");
     return v1 + v2;
   }));
 
-  e.addOperator(OperatorImpl("-", Expression.operatorPrecedenceAdditive, true, fEval: (v1, v2) {
+  e.addOperator(OperatorImpl("-", Expression.operatorPrecedenceAdditive, true,
+      fEval: (v1, v2) {
     assert(v1 != null, "First operand may not be null");
     assert(v2 != null, "Second operand may not be null");
     return v1 - v2;
   }));
 
-  e.addOperator(
-      OperatorImpl("*", Expression.operatorPrecedenceMultiplicative, true, fEval: (v1, v2) {
+  e.addOperator(OperatorImpl(
+      "*", Expression.operatorPrecedenceMultiplicative, true, fEval: (v1, v2) {
     assert(v1 != null, "First operand may not be null");
     assert(v2 != null, "Second operand may not be null");
     return v1 * v2;
   }));
 
-  e.addOperator(
-      OperatorImpl("/", Expression.operatorPrecedenceMultiplicative, true, fEval: (v1, v2) {
+  e.addOperator(OperatorImpl(
+      "/", Expression.operatorPrecedenceMultiplicative, true, fEval: (v1, v2) {
     assert(v1 != null, "First operand may not be null");
     assert(v2 != null, "Second operand may not be null");
     return v1 / v2;
   }));
 
-  e.addOperator(
-      OperatorImpl("%", Expression.operatorPrecedenceMultiplicative, true, fEval: (v1, v2) {
+  e.addOperator(OperatorImpl(
+      "%", Expression.operatorPrecedenceMultiplicative, true, fEval: (v1, v2) {
     assert(v1 != null, "First operand may not be null");
     assert(v2 != null, "Second operand may not be null");
     return v1 % v2;
   }));
 
-  e.addOperator(OperatorImpl("^", e.powerOperatorPrecedence, false, fEval: (v1, v2) {
+  e.addOperator(
+      OperatorImpl("^", e.powerOperatorPrecedence, false, fEval: (v1, v2) {
     assert(v1 != null, "First operand may not be null");
     assert(v2 != null, "Second operand may not be null");
 
@@ -90,7 +93,8 @@ void addBuiltIns(Expression e) {
     Decimal remainderOf2 = v2.remainder(Decimal.one);
     Decimal n2IntPart = v2 - remainderOf2;
     Decimal intPow = v1.pow(n2IntPart.toInt());
-    Decimal doublePow = Decimal.parse(math.pow(dn1, remainderOf2.toDouble()).toString());
+    Decimal doublePow =
+        Decimal.parse(math.pow(dn1, remainderOf2.toDouble()).toString());
 
     Decimal result = intPow * doublePow;
     if (signOf2 == -1) {
@@ -100,8 +104,8 @@ void addBuiltIns(Expression e) {
     return result;
   }));
 
-  e.addOperator(OperatorImpl("&&", Expression.operatorPrecedenceAnd, false, booleanOperator: true,
-      fEval: (v1, v2) {
+  e.addOperator(OperatorImpl("&&", Expression.operatorPrecedenceAnd, false,
+      booleanOperator: true, fEval: (v1, v2) {
     assert(v1 != null, "First operand may not be null");
     assert(v2 != null, "Second operand may not be null");
 
@@ -116,8 +120,8 @@ void addBuiltIns(Expression e) {
     return b2 ? Decimal.one : Decimal.zero;
   }));
 
-  e.addOperator(OperatorImpl("||", Expression.operatorPrecedenceOr, false, booleanOperator: true,
-      fEval: (v1, v2) {
+  e.addOperator(OperatorImpl("||", Expression.operatorPrecedenceOr, false,
+      booleanOperator: true, fEval: (v1, v2) {
     assert(v1 != null, "First operand may not be null");
     assert(v2 != null, "Second operand may not be null");
 
@@ -132,14 +136,16 @@ void addBuiltIns(Expression e) {
     return b2 ? Decimal.one : Decimal.zero;
   }));
 
-  e.addOperator(OperatorImpl(">", Expression.operatorPrecedenceComparison, false, fEval: (v1, v2) {
+  e.addOperator(OperatorImpl(
+      ">", Expression.operatorPrecedenceComparison, false, fEval: (v1, v2) {
     assert(v1 != null, "First operand may not be null");
     assert(v2 != null, "Second operand may not be null");
 
     return v1.compareTo(v2) > 0 ? Decimal.one : Decimal.zero;
   }));
 
-  e.addOperator(OperatorImpl(">=", Expression.operatorPrecedenceComparison, false,
+  e.addOperator(OperatorImpl(
+      ">=", Expression.operatorPrecedenceComparison, false,
       booleanOperator: true, fEval: (v1, v2) {
     assert(v1 != null, "First operand may not be null");
     assert(v2 != null, "Second operand may not be null");
@@ -147,7 +153,8 @@ void addBuiltIns(Expression e) {
     return v1.compareTo(v2) >= 0 ? Decimal.one : Decimal.zero;
   }));
 
-  e.addOperator(OperatorImpl("<", Expression.operatorPrecedenceComparison, false,
+  e.addOperator(OperatorImpl(
+      "<", Expression.operatorPrecedenceComparison, false,
       booleanOperator: true, fEval: (v1, v2) {
     assert(v1 != null, "First operand may not be null");
     assert(v2 != null, "Second operand may not be null");
@@ -155,7 +162,8 @@ void addBuiltIns(Expression e) {
     return v1.compareTo(v2) < 0 ? Decimal.one : Decimal.zero;
   }));
 
-  e.addOperator(OperatorImpl("<=", Expression.operatorPrecedenceComparison, false,
+  e.addOperator(OperatorImpl(
+      "<=", Expression.operatorPrecedenceComparison, false,
       booleanOperator: true, fEval: (v1, v2) {
     assert(v1 != null, "First operand may not be null");
     assert(v2 != null, "Second operand may not be null");
@@ -235,13 +243,15 @@ void addBuiltIns(Expression e) {
     }
   }));
 
-  e.addOperator(UnaryOperatorImpl("-", Expression.operatorPrecedenceUnary, false, fEval: (v1) {
+  e.addOperator(UnaryOperatorImpl(
+      "-", Expression.operatorPrecedenceUnary, false, fEval: (v1) {
     assert(v1 != null, "Operand may not be null");
 
     return v1 * Decimal.fromInt(-1);
   }));
 
-  e.addOperator(UnaryOperatorImpl("+", Expression.operatorPrecedenceUnary, false, fEval: (v1) {
+  e.addOperator(UnaryOperatorImpl(
+      "+", Expression.operatorPrecedenceUnary, false, fEval: (v1) {
     assert(v1 != null, "Operand may not be null");
 
     return v1 * Decimal.one;
@@ -430,7 +440,8 @@ void addBuiltIns(Expression e) {
   e.addFunc(FunctionImpl("ATAN2", 2, fEval: (params) {
     assert(params[0] != null, "First operand may not be null");
     assert(params[1] != null, "Second operand may not be null");
-    double d = radsToDegrees(math.atan2(params[0].toDouble(), params[1].toDouble()));
+    double d =
+        radsToDegrees(math.atan2(params[0].toDouble(), params[1].toDouble()));
     return Decimal.parse(d.toString());
   }));
 
@@ -519,7 +530,8 @@ void addBuiltIns(Expression e) {
     return Decimal.parse(math.sqrt(params.first.toDouble()).toString());
   }));
 
-  e.variables["theAnswerToLifeTheUniverseAndEverything"] = e.createLazyNumber(Decimal.fromInt(42));
+  e.variables["theAnswerToLifeTheUniverseAndEverything"] =
+      e.createLazyNumber(Decimal.fromInt(42));
 
   e.variables["e"] = e.createLazyNumber(Expression.e);
   e.variables["PI"] = e.createLazyNumber(Expression.pi);
@@ -557,7 +569,8 @@ class UnaryOperatorImpl extends AbstractUnaryOperator {
 class FunctionImpl extends AbstractFunction {
   Function(List<Decimal>) fEval;
 
-  FunctionImpl(String name, int numParams, {bool booleanFunction = false, this.fEval})
+  FunctionImpl(String name, int numParams,
+      {bool booleanFunction = false, this.fEval})
       : super(name, numParams, booleanFunction: booleanFunction);
 
   @override
@@ -569,7 +582,8 @@ class FunctionImpl extends AbstractFunction {
 class LazyFunctionImpl extends AbstractLazyFunction {
   Function(List<LazyNumber>) fEval;
 
-  LazyFunctionImpl(String name, int numParams, {bool booleanFunction = false, this.fEval})
+  LazyFunctionImpl(String name, int numParams,
+      {bool booleanFunction = false, this.fEval})
       : super(name, numParams, booleanFunction: booleanFunction);
 
   @override

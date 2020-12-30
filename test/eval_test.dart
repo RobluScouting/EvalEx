@@ -144,9 +144,11 @@ void main() {
     expect(Expression("3^2").eval().toString(), "9");
     expect(Expression("2.5^2").eval().toString(), "6.25");
     expect(Expression("2.6^3.5").eval().toString(), "28.34044843681906296");
-    expect(Expression("PI^2").eval().toStringAsPrecision(128), "9.8696044010893586188344909998761511353136994072407906264133493762200448224192052430017734037185522313078742635808502091666098354");
+    expect(Expression("PI^2").eval().toStringAsPrecision(128),
+        "9.8696044010893586188344909998761511353136994072407906264133493762200448224192052430017734037185522313078742635808502091666098354");
 
-    expect(() => Expression("9^9^9").eval(), throwsA(isInstanceOf<ExpressionException>()));
+    expect(() => Expression("9^9^9").eval(),
+        throwsA(isInstanceOf<ExpressionException>()));
   });
 
   test("testSqrt", () {
@@ -337,11 +339,14 @@ void main() {
     expect(Expression("TAN(30)").eval().toString(), "0.5773502691896257");
     expect(Expression("RAD(30)").eval().toString(), "0.5235987755982988");
     expect(Expression("DEG(30)").eval().toString(), "1718.8733853924696");
-    expect(Expression("atan(0.5773503)").eval().toString(), "30.000001323978292");
-    expect(Expression("atan2(0.5773503, 1)").eval().toString(), "30.000001323978292");
+    expect(
+        Expression("atan(0.5773503)").eval().toString(), "30.000001323978292");
+    expect(Expression("atan2(0.5773503, 1)").eval().toString(),
+        "30.000001323978292");
     expect(Expression("atan2(2, 3)").eval().toString(), "33.690067525979785");
     expect(Expression("atan2(2, -3)").eval().toString(), "146.30993247402023");
-    expect(Expression("atan2(-2, -3)").eval().toString(), "-146.30993247402023");
+    expect(
+        Expression("atan2(-2, -3)").eval().toString(), "-146.30993247402023");
     expect(Expression("atan2(-2, 3)").eval().toString(), "-33.690067525979785");
     expect(Expression("SEC(30)").eval().toString(), "1.1547005383792515");
     expect(Expression("SEC(45)").eval().toString(), "1.414213562373095");
@@ -567,7 +572,8 @@ void main() {
   });
 
   test("testStrEq", () {
-    Expression e = new Expression("STREQ(\"test32asd234@#\",\"test32asd234@#\")");
+    Expression e =
+        new Expression("STREQ(\"test32asd234@#\",\"test32asd234@#\")");
     expect(e.eval().toString(), "1");
 
     e = new Expression("STREQ(\"test\",\"test32asd234@#\")");

@@ -97,7 +97,7 @@ void main() {
     try {
       e.eval();
     } on ExpressionException catch (e) {
-      err =  e.msg;
+      err = e.msg;
     }
 
     expect(err, "Unknown operator or function: e2");

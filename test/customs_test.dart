@@ -108,13 +108,12 @@ void main() {
     Expression e = new Expression("STREQ(\"test\", \"test2\")");
     e.addLazyFunction(
         LazyFunctionImpl("STREQ", 2, booleanFunction: true, fEval: (params) {
-          if (params[0].getString() == params[1].getString()) {
-            return LazyNumberImpl(
-                eval: () => Decimal.zero, getString: () => "0");
-          }
+      if (params[0].getString() == params[1].getString()) {
+        return LazyNumberImpl(eval: () => Decimal.zero, getString: () => "0");
+      }
 
-          return LazyNumberImpl(eval: () => Decimal.one, getString: () => "1");
-        }));
+      return LazyNumberImpl(eval: () => Decimal.one, getString: () => "1");
+    }));
 
     expect(e.eval().toString(), "1");
     expect(e.isBoolean(), true);
@@ -133,17 +132,16 @@ void main() {
   test("testCustomOperatorAnd", () {
     Expression e = new Expression("1 == 1 AND 2 == 2");
 
-    e.addOperator(OperatorImpl(
-        "AND", Expression.operatorPrecedenceAnd, false, booleanOperator: true, fEval: (
-        v1, v2) {
-        bool b1 = v1.compareTo(Decimal.zero) != 0;
+    e.addOperator(OperatorImpl("AND", Expression.operatorPrecedenceAnd, false,
+        booleanOperator: true, fEval: (v1, v2) {
+      bool b1 = v1.compareTo(Decimal.zero) != 0;
 
-        if(!b1) {
-          return Decimal.zero;
-        }
+      if (!b1) {
+        return Decimal.zero;
+      }
 
-        bool b2 = v2.compareTo(Decimal.zero) != 0;
-        return b2 ? Decimal.one : Decimal.zero;
+      bool b2 = v2.compareTo(Decimal.zero) != 0;
+      return b2 ? Decimal.one : Decimal.zero;
     }));
 
     expect(e.eval().toString(), "1");

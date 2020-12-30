@@ -127,7 +127,8 @@ void main() {
   });
 
   test("failsIfVariableDoesNotExist", () {
-    expect(() => Expression("3*unknown").eval(), throwsA(isInstanceOf<ExpressionException>()));
+    expect(() => Expression("3*unknown").eval(),
+        throwsA(isInstanceOf<ExpressionException>()));
   });
 
   test("testNullVariable", () {
@@ -142,7 +143,7 @@ void main() {
 
     try {
       new Expression("a+1")..setStringVariable("a", "null").eval();
-    } on AssertionError catch(e) {
+    } on AssertionError catch (e) {
       err = e.message;
     }
 

@@ -34,13 +34,15 @@ void main() {
     expect(Expression("(1+2)/4").toRPN(), "1 2 + 4 /");
     expect(Expression("(1.9+2.8)/4.7").toRPN(), "1.9 2.8 + 4.7 /");
     expect(Expression("(1.98+2.87)/4.76").toRPN(), "1.98 2.87 + 4.76 /");
-    expect(Expression("3 + 4 * 2 / ( 1 - 5 ) ^ 2 ^ 3").toRPN(), "3 4 2 * 1 5 - 2 3 ^ ^ / +");
+    expect(Expression("3 + 4 * 2 / ( 1 - 5 ) ^ 2 ^ 3").toRPN(),
+        "3 4 2 * 1 5 - 2 3 ^ ^ / +");
   });
 
   test("testFunctions", () {
     expect(Expression("SIN(23.6)").toRPN(), "( 23.6 SIN");
     expect(Expression("MAX(-7,8)").toRPN(), "( 7 -u 8 MAX");
-    expect(Expression("MAX(SIN(3.7),MAX(2.6,-8.0))").toRPN(), "( ( 3.7 SIN ( 2.6 8.0 -u MAX MAX");
+    expect(Expression("MAX(SIN(3.7),MAX(2.6,-8.0))").toRPN(),
+        "( ( 3.7 SIN ( 2.6 8.0 -u MAX MAX");
   });
 
   test("testOperatorsInFunctions", () {

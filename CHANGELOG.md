@@ -1,3 +1,9 @@
+## [1.0.11] - 12/29/2020
+Fixing static analysis issues introduced in latest Flutter releases
+
+## [1.0.10] - 11/16/2020
+Fixed formatting
+
 ## [1.0.9] - 11/16/2020
 Bug fixes to ">" and "<" operators.
 

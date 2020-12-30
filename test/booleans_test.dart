@@ -43,7 +43,9 @@ void main() {
     e = Expression("false==FALSE");
     expect(e.eval().toString(), "1");
 
-    e = Expression("a==b")..setStringVariable("a", "1")..setStringVariable("b", "2");
+    e = Expression("a==b")
+      ..setStringVariable("a", "1")
+      ..setStringVariable("b", "2");
     expect(e.isBoolean(), true);
 
     e = new Expression("(1==1)||(c==a+b)");

@@ -72,7 +72,7 @@ void main() {
 
     try {
       e.eval();
-    } on ExpressionException catch(e) {
+    } on ExpressionException catch (e) {
       err = e.msg;
     }
 
@@ -82,7 +82,7 @@ void main() {
   test("testCustomFunction1", () {
     Expression e = new Expression("3 * AVG(2,4)");
     e.addFunc(FunctionImpl("AVG", -1, fEval: (params) {
-      if(params.length == 0) {
+      if (params.length == 0) {
         throw new ExpressionException("AVG requires at least one parameter");
       }
 
@@ -99,7 +99,7 @@ void main() {
   test("testCustomFunction2", () {
     Expression e = new Expression("4 * AVG(2,4,6,8,10,12)");
     e.addFunc(FunctionImpl("AVG", -1, fEval: (params) {
-      if(params.length == 0) {
+      if (params.length == 0) {
         throw new ExpressionException("AVG requires at least one parameter");
       }
 

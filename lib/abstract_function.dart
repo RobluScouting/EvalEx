@@ -68,7 +68,7 @@ class _LazyNumberImpl extends LazyNumber {
 
   List<Decimal> _getParams() {
     if (_params == null) {
-      _params = List();
+      _params = [];
       _params.addAll(_lazyParams.map((e) => e.eval()));
     }
 
