@@ -368,7 +368,7 @@ class Expression {
           break;
         case TokenType.function:
           ILazyFunction f = functions[token.surface.toUpperCase()];
-          List<LazyNumber> p = List<LazyNumber>();
+          List<LazyNumber> p = [];
           // pop parameters off the stack until we hit the start of
           // this function's parameter list
           while (!stack.isEmpty && stack.first != _paramsStart) {

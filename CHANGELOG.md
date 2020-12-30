@@ -1,3 +1,6 @@
+## [1.0.12] - 12/29/2020
+Fixing static analysis issues introduced in latest Flutter releases
+
 ## [1.0.11] - 12/29/2020
 Fixing static analysis issues introduced in latest Flutter releases
 
