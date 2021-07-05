@@ -36,5 +36,5 @@ abstract class IFunc extends ILazyFunction {
   ///            {@link List} of {@link BigDecimal} values.
   /// Returns the function must return a new {@link BigDecimal} value as a
   /// computing result.
-  Decimal eval(List<Decimal> parameters);
+  Decimal eval(List<Decimal?> parameters);
 }

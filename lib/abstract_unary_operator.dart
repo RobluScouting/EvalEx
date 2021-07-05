@@ -42,7 +42,7 @@ abstract class AbstractUnaryOperator extends AbstractOperator {
       : super(oper, precedence, leftAssoc);
 
   @override
-  LazyNumber evalLazy(final LazyNumber v1, final LazyNumber v2) {
+  LazyNumber evalLazy(final LazyNumber v1, final LazyNumber? v2) {
     if (v2 != null) {
       throw ExpressionException(
           "Did not expect a second parameter for unary operator");
@@ -56,7 +56,7 @@ abstract class AbstractUnaryOperator extends AbstractOperator {
   }
 
   @override
-  Decimal eval(Decimal v1, Decimal v2) {
+  Decimal eval(Decimal? v1, Decimal? v2) {
     if (v2 != null) {
       throw ExpressionException(
           "Did not expect a second parameter for unary operator");
@@ -65,5 +65,5 @@ abstract class AbstractUnaryOperator extends AbstractOperator {
     return evalUnary(v1);
   }
 
-  Decimal evalUnary(Decimal v1);
+  Decimal evalUnary(Decimal? v1);
 }

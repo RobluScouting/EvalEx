@@ -29,20 +29,35 @@ import 'package:eval_ex/expression.dart';
 
 /// Lazy Number for IF function created for lazily evaluated IF condition
 class LazyIfNumber implements LazyNumber {
-  List<LazyNumber> _lazyParams;
+  List<LazyNumber?> _lazyParams;
 
   LazyIfNumber(this._lazyParams);
 
   @override
-  Decimal eval() {
-    Decimal result = _lazyParams[0].eval();
-    assert(result != null, "Operand may not be null");
+  Decimal? eval() {
+    LazyNumber? condition = _lazyParams[0];
+
+    if (condition == null) {
+      throw new AssertionError("Condition may not be null.");
+    }
+
+    Decimal? result = condition.eval();
+
+    if (result == null) {
+      throw new AssertionError("Condition may not be null.");
+    }
+
     bool isTrue = result.compareTo(Decimal.zero) != 0;
-    return isTrue ? _lazyParams[1].eval() : _lazyParams[2].eval();
+    return isTrue ? _lazyParams[1]?.eval() : _lazyParams[2]?.eval();
   }
 
   @override
   String getString() {
-    return _lazyParams[0].getString();
+    LazyNumber? condition = _lazyParams[0];
+    if (condition == null) {
+      throw new AssertionError("Condition may not be null.");
+    }
+
+    return condition.getString();
   }
 }

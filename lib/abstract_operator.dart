@@ -38,11 +38,13 @@ abstract class AbstractOperator extends AbstractLazyOperator
   /// [precedence] - The operators precedence.
   /// [leftAssoc] - `true` if the operator is left associative, else `false<`
   /// [booleanOperator] Whether this operator is boolean.
+  /// [unaryOperator] Whether the operator takes one or two operands
   AbstractOperator(String oper, int precedence, bool leftAssoc,
-      {bool booleanOperator = false})
-      : super(oper, precedence, leftAssoc, booleanOperator: booleanOperator);
+      {bool booleanOperator = false, bool unaryOperator = false})
+      : super(oper, precedence, leftAssoc,
+            booleanOperator: booleanOperator, unaryOperator: unaryOperator);
 
-  LazyNumber evalLazy(final LazyNumber v1, final LazyNumber v2) {
+  LazyNumber evalLazy(final LazyNumber v1, final LazyNumber? v2) {
     return _LazyNumberImpl(this, v1, v2);
   }
 }
@@ -50,13 +52,13 @@ abstract class AbstractOperator extends AbstractLazyOperator
 class _LazyNumberImpl extends LazyNumber {
   AbstractOperator _abstractOperator;
   LazyNumber _v1;
-  LazyNumber _v2;
+  LazyNumber? _v2;
 
   _LazyNumberImpl(this._abstractOperator, this._v1, this._v2);
 
   @override
   Decimal eval() {
-    return _abstractOperator.eval(_v1.eval(), _v2.eval());
+    return _abstractOperator.eval(_v1.eval(), _v2?.eval());
   }
 
   @override

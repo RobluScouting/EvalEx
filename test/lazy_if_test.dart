@@ -60,9 +60,9 @@ void main() {
     try {
       new Expression("if(a,0,12/a)")..setStringVariable("a", "null").eval();
     } on AssertionError catch (e) {
-      err = e.message;
+      err = e.message.toString();
     }
 
-    expect(err, "Operand may not be null");
+    expect(err, "Condition may not be null.");
   });
 }

@@ -88,7 +88,7 @@ class Expression {
   String _expressionString;
 
   /// The cached RPN (Reverse Polish Notation) of the expression.
-  List<Token> _rpn;
+  List<Token>? _rpn;
 
   /// All defined operators with name and implementation.
   Map<String, ILazyOperator> operators =
@@ -99,7 +99,7 @@ class Expression {
       SplayTreeMap((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
 
   /// All defined variables with name and value.
-  Map<String, LazyNumber> variables =
+  Map<String, LazyNumber?> variables =
       SplayTreeMap((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
 
   /// What character to use for decimal separators.
@@ -113,7 +113,7 @@ class Expression {
       LazyNumberImpl(eval: () => null, getString: () => null);
 
   /// Construct a LazyNumber from a BigDecimal
-  LazyNumber createLazyNumber(final Decimal decimal) {
+  LazyNumber createLazyNumber(final Decimal? decimal) {
     return LazyNumberImpl(
         eval: () => decimal, getString: () => decimal.toString());
   }
@@ -171,11 +171,11 @@ class Expression {
 
     _Tokenizer tokenizer = _Tokenizer(this, expression);
 
-    Token lastFunction;
-    Token previousToken;
+    Token? lastFunction;
+    Token? previousToken;
 
     while (tokenizer.moveNext()) {
-      Token token = tokenizer.current;
+      Token token = tokenizer.current!;
 
       switch (token.type) {
         case TokenType.stringParam:
@@ -215,13 +215,16 @@ class Expression {
           break;
         case TokenType.operator:
           if (previousToken != null &&
+              operators.containsKey(token.surface) &&
               (previousToken.type == TokenType.comma ||
                   previousToken.type == TokenType.openParen)) {
-            throw new ExpressionException.pos(
-                missingParametersForOperator + token.toString(), token.pos);
+            if (!operators[token.surface]!.isUnaryOperator()) {
+              throw new ExpressionException.pos(
+                  missingParametersForOperator + token.toString(), token.pos);
+            }
           }
 
-          ILazyOperator o1 = operators[token.surface];
+          ILazyOperator? o1 = operators[token.surface];
           if (o1 == null) {
             throw new ExpressionException.pos(
                 "Unknown operator " + token.toString(), token.pos + 1);
@@ -240,7 +243,7 @@ class Expression {
                 "Invalid position for unary operator " + token.toString(),
                 token.pos);
           }
-          ILazyOperator o1 = operators[token.surface];
+          ILazyOperator? o1 = operators[token.surface];
           if (o1 == null) {
             throw new ExpressionException.pos(
                 "Unknown unary operator " +
@@ -273,7 +276,8 @@ class Expression {
           break;
         case TokenType.closeParen:
           if (previousToken != null &&
-              previousToken.type == TokenType.operator) {
+              previousToken.type == TokenType.operator &&
+              !operators[previousToken.surface]!.isUnaryOperator()) {
             throw new ExpressionException.pos(
                 missingParametersForOperator + previousToken.toString(),
                 previousToken.pos);
@@ -288,6 +292,10 @@ class Expression {
           if (!stack.isEmpty && stack.first.type == TokenType.function) {
             outputQueue.add(stack.removeFirst());
           }
+          break;
+        case null:
+        default:
+          break;
       }
 
       previousToken = token;
@@ -306,15 +314,15 @@ class Expression {
 
   void _shuntOperators(
       List<Token> outputQueue, ListQueue<Token> stack, ILazyOperator o1) {
-    Token nextToken = stack.isEmpty ? null : stack.first;
+    Token? nextToken = stack.isEmpty ? null : stack.first;
     while (nextToken != null &&
         (nextToken.type == TokenType.operator ||
             nextToken.type == TokenType.unaryOperator) &&
         ((o1.isLeftAssoc() &&
                 o1.getPrecedence() <=
-                    operators[nextToken.surface].getPrecedence()) ||
+                    (operators[nextToken.surface]?.getPrecedence() ?? 0)) ||
             (o1.getPrecedence() <
-                operators[nextToken.surface].getPrecedence()))) {
+                (operators[nextToken.surface]?.getPrecedence() ?? 0)))) {
       outputQueue.add(stack.removeFirst());
       nextToken = stack.isEmpty ? null : stack.first;
     }
@@ -323,7 +331,7 @@ class Expression {
   /// Evaluates the expression.
   ///
   /// Returns the result of the expression. Trailing zeros are stripped.
-  Decimal eval() {
+  Decimal? eval() {
     ListQueue<LazyNumber> stack = ListQueue();
 
     for (final Token token in getRPN()) {
@@ -332,10 +340,10 @@ class Expression {
           {
             final LazyNumber value = stack.removeFirst();
             LazyNumber result = new LazyNumberImpl(eval: () {
-              return operators[token.surface].evalLazy(value, null).eval();
+              return operators[token.surface]?.evalLazy(value, null).eval();
             }, getString: () {
               return operators[token.surface]
-                  .evalLazy(value, null)
+                  ?.evalLazy(value, null)
                   .eval()
                   .toString();
             });
@@ -343,14 +351,33 @@ class Expression {
             break;
           }
         case TokenType.operator:
-          final LazyNumber v1 = stack.removeFirst();
-          final LazyNumber v2 = stack.removeFirst();
-          LazyNumber result = new LazyNumberImpl(eval: () {
-            return operators[token.surface].evalLazy(v2, v1).eval();
-          }, getString: () {
-            return operators[token.surface].evalLazy(v2, v1).eval().toString();
-          });
-          stack.addFirst(result);
+          if (operators[token.surface]!.isUnaryOperator()) {
+            LazyNumber value = stack.removeFirst();
+            LazyNumberImpl result = new LazyNumberImpl(eval: () {
+              return operators[token.surface]!.evalLazy(value, null).eval();
+            }, getString: () {
+              return operators[token.surface]!
+                  .evalLazy(value, null)
+                  .eval()
+                  .toString();
+            });
+
+            stack.addFirst(result);
+          } else {
+            final LazyNumber v1 = stack.removeFirst();
+            final LazyNumber v2 = stack.removeFirst();
+            LazyNumber result = new LazyNumberImpl(eval: () {
+              return operators[token.surface]?.evalLazy(v2, v1).eval();
+            }, getString: () {
+              return operators[token.surface]
+                  ?.evalLazy(v2, v1)
+                  .eval()
+                  .toString();
+            });
+
+            stack.addFirst(result);
+          }
+
           break;
         case TokenType.variable:
           if (!variables.containsKey(token.surface)) {
@@ -359,15 +386,16 @@ class Expression {
           }
 
           stack.addFirst(LazyNumberImpl(eval: () {
-            LazyNumber lazyVariable = variables[token.surface];
-            Decimal value = lazyVariable == null ? null : lazyVariable.eval();
+            LazyNumber? lazyVariable = variables[token.surface];
+            Decimal? value = lazyVariable == null ? null : lazyVariable.eval();
             return value;
           }, getString: () {
-            return token.surface;
+            LazyNumber? lazyVariable = variables[token.surface];
+            return lazyVariable?.getString();
           }));
           break;
         case TokenType.function:
-          ILazyFunction f = functions[token.surface.toUpperCase()];
+          ILazyFunction f = functions[token.surface.toUpperCase()]!;
           List<LazyNumber> p = [];
           // pop parameters off the stack until we hit the start of
           // this function's parameter list
@@ -379,7 +407,7 @@ class Expression {
             stack.removeFirst();
           }
 
-          LazyNumber fResult = f.lazyEval(p);
+          LazyNumber? fResult = f.lazyEval(p);
           stack.addFirst(fResult);
           break;
         case TokenType.openParen:
@@ -418,7 +446,7 @@ class Expression {
       }
     }
 
-    Decimal result = stack.removeFirst().eval();
+    Decimal? result = stack.removeFirst().eval();
     if (result == null) {
       return null;
     }
@@ -485,7 +513,7 @@ class Expression {
   /// [variable] - The variable name.
   /// [value] - The variable value.
   /// Returns the expression, allows to chain methods.
-  Expression setDecimalVariable(String variable, Decimal value) {
+  Expression setDecimalVariable(String variable, Decimal? value) {
     return setLazyVariable(variable, createLazyNumber(value));
   }
 
@@ -494,7 +522,7 @@ class Expression {
   /// [variable] The variable name.
   /// [value] - The variable value.
   /// Returns the expression, allows to chain methods.
-  Expression setLazyVariable(String variable, LazyNumber value) {
+  Expression setLazyVariable(String variable, LazyNumber? value) {
     variables[variable] = value;
     return this;
   }
@@ -516,7 +544,7 @@ class Expression {
         innerE.variables = variables;
         innerE.functions = functions;
         innerE.operators = operators;
-        Decimal val = innerE.eval();
+        Decimal? val = innerE.eval();
         return val;
       }, getString: () {
         return expStr;
@@ -532,7 +560,7 @@ class Expression {
   /// [expression] The string expression.
   /// Returns the inner Expression instance.
   Expression _createEmbeddedExpression(final String expression) {
-    final Map<String, LazyNumber> outerVariables = variables;
+    final Map<String, LazyNumber?> outerVariables = variables;
     final Map<String, ILazyFunction> outerFunctions = functions;
     final Map<String, ILazyOperator> outerOperators = operators;
     Expression exp = new Expression(expression);
@@ -545,7 +573,7 @@ class Expression {
   /// Get an iterator for this expression, allows iterating over an expression token by token.
   ///
   /// Returns a new iterator instance for this expression.
-  Iterator<Token> getExpressionTokenizer() {
+  Iterator<Token?> getExpressionTokenizer() {
     final String expression = this._expressionString;
 
     return _Tokenizer(this, expression);
@@ -559,9 +587,9 @@ class Expression {
   List<Token> getRPN() {
     if (_rpn == null) {
       _rpn = _shuntingYard(this._expressionString);
-      _validate(_rpn);
+      _validate(_rpn!);
     }
-    return _rpn;
+    return _rpn!;
   }
 
   /// Check that the expression has enough numbers and variables to fit the requirements of the
@@ -587,16 +615,25 @@ class Expression {
           }
           break;
         case TokenType.operator:
-          if (stack.first < 2) {
+          ILazyOperator? op = operators[token.surface];
+          int numOperands = 2;
+          if (op?.isUnaryOperator() ?? false) {
+            numOperands = 1;
+          }
+
+          if (stack.first < numOperands) {
             throw new ExpressionException(
                 missingParametersForOperator + token.toString());
           }
-          // pop the operator's 2 parameters and add the result
-          int peek = stack.removeFirst();
-          stack.addFirst(peek - 2 + 1);
+          if (numOperands > 1) {
+            // pop the operator's 2 parameters and add the result
+            int peek = stack.removeFirst();
+            stack.addFirst(peek - numOperands + 1);
+          }
+
           break;
         case TokenType.function:
-          ILazyFunction f = functions[token.surface.toUpperCase()];
+          ILazyFunction? f = functions[token.surface.toUpperCase()];
           if (f == null) {
             throw new ExpressionException.pos(
                 "Unknown function " + token.toString(), token.pos + 1);
@@ -648,7 +685,7 @@ class Expression {
         result += " ";
       }
       if (t.type == TokenType.variable && variables.containsKey(t.surface)) {
-        LazyNumber innerVariable = variables[t.surface];
+        LazyNumber innerVariable = variables[t.surface]!;
         String innerExp = innerVariable.getString();
         if (isNumber(innerExp)) {
           // if it is a number, then we don't
@@ -687,9 +724,9 @@ class Expression {
           continue;
         }
         if (t.type == TokenType.function) {
-          return functions[t.surface].isBooleanFunction();
+          return functions[t.surface]!.isBooleanFunction();
         } else if (t.type == TokenType.operator) {
-          return operators[t.surface].isBooleanOperator();
+          return operators[t.surface]!.isBooleanOperator();
         }
       }
     }
@@ -703,7 +740,7 @@ class Expression {
     List<String> result = [];
     _Tokenizer tokenizer = new _Tokenizer(this, _expressionString);
     while (tokenizer.moveNext()) {
-      Token nextToken = tokenizer.current;
+      Token nextToken = tokenizer.current!;
       String token = nextToken.toString();
       if (nextToken.type != TokenType.variable ||
           token == "PI" ||
@@ -740,15 +777,15 @@ class Expression {
 }
 
 class LazyNumberImpl extends LazyNumber {
-  final Function() _eval;
-  final Function() _getString;
+  final Function _eval;
+  final Function _getString;
 
-  LazyNumberImpl({Function eval, Function getString})
+  LazyNumberImpl({required Function eval, required Function getString})
       : _eval = eval,
         _getString = getString;
 
   @override
-  Decimal eval() {
+  Decimal? eval() {
     return _eval();
   }
 
@@ -773,7 +810,7 @@ class ExpressionException implements Exception {
 
 /// LazyNumber interface created for lazily evaluated functions
 abstract class LazyNumber {
-  Decimal eval();
+  Decimal? eval();
 
   String getString();
 }
@@ -793,8 +830,8 @@ enum TokenType {
 
 class Token {
   String surface = "";
-  TokenType type;
-  int pos;
+  TokenType? type;
+  int pos = 0;
 
   void append(String c) => surface += c;
 
@@ -812,7 +849,7 @@ class Token {
 
 /// Expression tokenizer that allows to iterate over a {@link String} expression token by token.
 /// Blank characters will be skipped.
-class _Tokenizer extends Iterator<Token> {
+class _Tokenizer extends Iterator<Token?> {
   final List<String> _hexDigits = [
     'x',
     '0',
@@ -842,7 +879,10 @@ class _Tokenizer extends Iterator<Token> {
   String input;
 
   /// The previous token or <code>null</code> if none.
-  Token previousToken;
+  Token? previousToken;
+
+  /// The next token, or null if none
+  Token? nextToken = new Token();
 
   /// Creates a new tokenizer for an expression.
   ///
@@ -852,7 +892,7 @@ class _Tokenizer extends Iterator<Token> {
   /// Peek at the next character, without advancing the iterator.
   ///
   /// Returns the next character or character 0, if at end of string.
-  String peekNextChar() {
+  String? peekNextChar() {
     if (pos < (input.length - 1)) {
       return input[pos + 1];
     } else {
@@ -865,7 +905,7 @@ class _Tokenizer extends Iterator<Token> {
   }
 
   @override
-  Token get current {
+  Token? get current {
     return previousToken;
   }
 
@@ -910,11 +950,11 @@ class _Tokenizer extends Iterator<Token> {
       token.type = isHex ? TokenType.hexLiteral : TokenType.literal;
     } else if (ch == '"') {
       pos++;
-      if (previousToken.type != TokenType.stringParam) {
+      if (previousToken!.type != TokenType.stringParam) {
         ch = input[pos];
         while (ch != '"') {
           token.append(input[pos++]);
-          ch = pos == input.length ? 0 : input[pos];
+          ch = pos == input.length ? "" : input[pos];
         }
         token.type = TokenType.stringParam;
       } else {
@@ -982,10 +1022,12 @@ class _Tokenizer extends Iterator<Token> {
       }
 
       if (previousToken == null ||
-          previousToken.type == TokenType.operator ||
-          previousToken.type == TokenType.openParen ||
-          previousToken.type == TokenType.comma ||
-          previousToken.type == TokenType.unaryOperator) {
+          (previousToken!.type == TokenType.operator &&
+              !_expression.operators[previousToken!.surface]!
+                  .isUnaryOperator()) ||
+          previousToken!.type == TokenType.openParen ||
+          previousToken!.type == TokenType.comma ||
+          previousToken!.type == TokenType.unaryOperator) {
         token.surface += "u";
         token.type = TokenType.unaryOperator;
       } else {

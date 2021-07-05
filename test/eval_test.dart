@@ -144,7 +144,7 @@ void main() {
     expect(Expression("3^2").eval().toString(), "9");
     expect(Expression("2.5^2").eval().toString(), "6.25");
     expect(Expression("2.6^3.5").eval().toString(), "28.34044843681906296");
-    expect(Expression("PI^2").eval().toStringAsPrecision(128),
+    expect(Expression("PI^2").eval()!.toStringAsPrecision(128),
         "9.8696044010893586188344909998761511353136994072407906264133493762200448224192052430017734037185522313078742635808502091666098354");
 
     expect(() => Expression("9^9^9").eval(),
@@ -418,13 +418,13 @@ void main() {
   test("testMathContext", () {
     Expression e;
     e = new Expression("2.5/3");
-    expect(e.eval().toStringAsPrecision(2), "0.83");
+    expect(e.eval()!.toStringAsPrecision(2), "0.83");
 
     e = new Expression("2.5/3");
-    expect(e.eval().toStringAsPrecision(3), "0.833");
+    expect(e.eval()!.toStringAsPrecision(3), "0.833");
 
     e = new Expression("2.5/3");
-    expect(e.eval().toStringAsPrecision(8), "0.83333333");
+    expect(e.eval()!.toStringAsPrecision(8), "0.83333333");
   });
 
   test("unknownFunctionsFailGracefully", () {
@@ -458,57 +458,57 @@ void main() {
     try {
       new Expression("null+1").eval();
     } on AssertionError catch (e) {
-      err = e.message;
+      err = e.message.toString();
     }
-    expect(err, "First operand may not be null");
+    expect(err, "First operand may not be null.");
 
     err = "";
     try {
       new Expression("1 + NULL").eval();
     } on AssertionError catch (e) {
-      err = e.message;
+      err = e.message.toString();
     }
-    expect(err, "Second operand may not be null");
+    expect(err, "Second operand may not be null.");
 
     err = "";
     try {
       new Expression("round(Null, 1)").eval();
     } on AssertionError catch (e) {
-      err = e.message;
+      err = e.message.toString();
     }
-    expect(err, "First operand may not be null");
+    expect(err, "Operand #1 may not be null.");
 
     err = "";
     try {
       new Expression("round(1, NulL)").eval();
     } on AssertionError catch (e) {
-      err = e.message;
+      err = e.message.toString();
     }
-    expect(err, "Second operand may not be null");
+    expect(err, "Operand #2 may not be null.");
   });
 
   test("canEvalHexExpression", () {
-    Decimal result = new Expression("0xcafe").eval();
+    Decimal result = new Expression("0xcafe").eval()!;
     expect(result.toString(), "51966");
   });
 
   test("hexExpressionCanUseUpperCaseCharacters", () {
-    Decimal result = new Expression("0XCAFE").eval();
+    Decimal result = new Expression("0XCAFE").eval()!;
     expect(result.toString(), "51966");
   });
 
   test("hexMinus", () {
-    Decimal result = new Expression("-0XCAFE").eval();
+    Decimal result = new Expression("-0XCAFE").eval()!;
     expect(result.toString(), "-51966");
   });
 
   test("hexMinusBlanks", () {
-    Decimal result = new Expression("  0xa + -0XCAFE  ").eval();
+    Decimal result = new Expression("  0xa + -0XCAFE  ").eval()!;
     expect(result.toString(), "-51956");
   });
 
   test("longHexExpressionWorks", () {
-    Decimal result = new Expression("0xcafebabe").eval();
+    Decimal result = new Expression("0xcafebabe").eval()!;
     expect(result.toString(), "3405691582");
   });
 
@@ -523,7 +523,7 @@ void main() {
   });
 
   test("hexExpressionsEvaluatedAsExpected", () {
-    Decimal result = new Expression("0xcafe + 0xbabe").eval();
+    Decimal result = new Expression("0xcafe + 0xbabe").eval()!;
     expect(result.toString(), "99772");
   });
 

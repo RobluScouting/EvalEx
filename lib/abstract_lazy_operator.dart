@@ -40,6 +40,8 @@ abstract class AbstractLazyOperator implements ILazyOperator {
   /// Whether this operator is boolean or not.
   bool booleanOperator;
 
+  bool unaryOperator;
+
   /// Creates a new operator.
   ///
   /// [oper] - The operator name (pattern).
@@ -47,7 +49,7 @@ abstract class AbstractLazyOperator implements ILazyOperator {
   /// [leftAssoc] - `true` if the operator is left associative, else `false`.
   /// [booleanOperator] - Whether this operator is boolean.
   AbstractLazyOperator(this.oper, this.precedence, this.leftAssoc,
-      {this.booleanOperator = false});
+      {this.booleanOperator = false, this.unaryOperator = false});
 
   @override
   String getOper() {
@@ -67,5 +69,10 @@ abstract class AbstractLazyOperator implements ILazyOperator {
   @override
   bool isBooleanOperator() {
     return booleanOperator;
+  }
+
+  @override
+  bool isUnaryOperator() {
+    return unaryOperator;
   }
 }

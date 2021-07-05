@@ -30,24 +30,24 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   test("testContinuousUnary", () {
     Expression expression = new Expression("++1");
-    expect(expression.eval().toInt(), 1);
+    expect(expression.eval()?.toInt(), 1);
 
     expression = new Expression("--1");
-    expect(expression.eval().toInt(), 1);
+    expect(expression.eval()?.toInt(), 1);
 
     expression = new Expression("+-1");
-    expect(expression.eval().toInt(), -1);
+    expect(expression.eval()?.toInt(), -1);
 
     expression = new Expression("-+1");
-    expect(expression.eval().toInt(), -1);
+    expect(expression.eval()?.toInt(), -1);
 
     expression = new Expression("1-+1");
-    expect(expression.eval().toInt(), 0);
+    expect(expression.eval()?.toInt(), 0);
 
     expression = new Expression("-+---+++--++-1");
-    expect(expression.eval().toInt(), -1);
+    expect(expression.eval()?.toInt(), -1);
 
     expression = new Expression("1--++++---2+-+----1");
-    expect(expression.eval().toInt(), -2);
+    expect(expression.eval()?.toInt(), -2);
   });
 }

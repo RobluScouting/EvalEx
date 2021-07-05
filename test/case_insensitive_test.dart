@@ -33,26 +33,26 @@ void main() {
   test("testVariableIsCaseInsensitive", () {
     Expression expression = new Expression("a");
     expression.setDecimalVariable("A", Decimal.fromInt(20));
-    expect(expression.eval().toInt(), 20);
+    expect(expression.eval()?.toInt(), 20);
 
     expression = new Expression("a + B");
     expression.setDecimalVariable("A", Decimal.fromInt(10));
     expression.setDecimalVariable("b", Decimal.fromInt(10));
-    expect(expression.eval().toInt(), 20);
+    expect(expression.eval()?.toInt(), 20);
 
     expression = new Expression("a+B");
     expression.setStringVariable("A", "c+d");
     expression.setDecimalVariable("b", Decimal.fromInt(10));
     expression.setDecimalVariable("C", Decimal.fromInt(5));
     expression.setDecimalVariable("d", Decimal.fromInt(5));
-    expect(expression.eval().toInt(), 20);
+    expect(expression.eval()?.toInt(), 20);
   });
 
   test("testFunctionCaseInsensitive", () {
     Expression expression = Expression("a+testsum(1,3)");
     expression.setDecimalVariable("A", Decimal.one);
     expression.addFunc(FunctionImpl("testSum", -1, fEval: (params) {
-      Decimal value;
+      Decimal? value;
       for (Decimal d in params) {
         value = value == null ? d : value + d;
       }

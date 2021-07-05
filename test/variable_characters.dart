@@ -66,7 +66,7 @@ void main() {
     expect(
         (expression..setStringVariable("a.b", "2")..setStringVariable("b", "3"))
             .eval()
-            .toStringAsPrecision(7),
+            ?.toStringAsPrecision(7),
         "5.859874");
 
     try {
@@ -85,7 +85,7 @@ void main() {
     expect(
         (expression..setStringVariable("a.b", "2")..setStringVariable("b", "3"))
             .eval()
-            .toStringAsFixed(7),
+            ?.toStringAsFixed(7),
         "5.8598745");
   });
 

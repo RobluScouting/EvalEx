@@ -48,10 +48,14 @@ abstract class ILazyOperator {
   /// Returns `true` if this operator evaluates to a boolean expression.
   bool isBooleanOperator();
 
+  /// True if the number of operands for this operator is 1, false if
+  /// it is 2.
+  bool isUnaryOperator();
+
   /// Implementation for this operator.
   ///
   /// [v1] - Operand 1.
   /// [v2] - Operand 2.
   /// Returns the result of the operation.
-  LazyNumber evalLazy(LazyNumber v1, LazyNumber v2);
+  LazyNumber evalLazy(LazyNumber v1, LazyNumber? v2);
 }

@@ -52,7 +52,7 @@ abstract class AbstractFunction extends AbstractLazyFunction implements IFunc {
 class _LazyNumberImpl extends LazyNumber {
   AbstractFunction _abstractFunction;
   List<LazyNumber> _lazyParams;
-  List<Decimal> _params;
+  List<Decimal?>? _params;
 
   _LazyNumberImpl(this._abstractFunction, this._lazyParams);
 
@@ -66,12 +66,11 @@ class _LazyNumberImpl extends LazyNumber {
     return eval().toString();
   }
 
-  List<Decimal> _getParams() {
+  List<Decimal?> _getParams() {
     if (_params == null) {
-      _params = [];
-      _params.addAll(_lazyParams.map((e) => e.eval()));
+      _params = _lazyParams.map((e) => e.eval()).toList();
     }
 
-    return _params;
+    return _params!;
   }
 }

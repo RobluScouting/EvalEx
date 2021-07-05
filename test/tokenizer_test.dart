@@ -37,59 +37,59 @@ void assertToken(String surface, TokenType type, Token actual) {
 void main() {
   test("testSpacesFunctions", () {
     Expression e;
-    Iterator<Token> i;
+    Iterator<Token?> i;
 
     e = new Expression("sin (30)");
     i = e.getExpressionTokenizer();
     i.moveNext();
-    assertToken("sin", TokenType.function, i.current);
+    assertToken("sin", TokenType.function, i.current!);
     i.moveNext();
-    assertToken("(", TokenType.openParen, i.current);
+    assertToken("(", TokenType.openParen, i.current!);
     i.moveNext();
-    assertToken("30", TokenType.literal, i.current);
+    assertToken("30", TokenType.literal, i.current!);
     i.moveNext();
-    assertToken(")", TokenType.closeParen, i.current);
+    assertToken(")", TokenType.closeParen, i.current!);
     expect(i.moveNext(), false);
   });
 
   test("testSpacesFunctionsVariablesOperators", () {
     Expression e;
-    Iterator<Token> i;
+    Iterator<Token?> i;
 
     e = new Expression("   sin   (   30   +   x   )   ");
     i = e.getExpressionTokenizer();
     i.moveNext();
-    assertToken("sin", TokenType.function, i.current);
+    assertToken("sin", TokenType.function, i.current!);
     i.moveNext();
-    assertToken("(", TokenType.openParen, i.current);
+    assertToken("(", TokenType.openParen, i.current!);
     i.moveNext();
-    assertToken("30", TokenType.literal, i.current);
+    assertToken("30", TokenType.literal, i.current!);
     i.moveNext();
-    assertToken("+", TokenType.operator, i.current);
+    assertToken("+", TokenType.operator, i.current!);
     i.moveNext();
-    assertToken("x", TokenType.variable, i.current);
+    assertToken("x", TokenType.variable, i.current!);
     i.moveNext();
-    assertToken(")", TokenType.closeParen, i.current);
+    assertToken(")", TokenType.closeParen, i.current!);
     expect(i.moveNext(), false);
   });
 
   test("testNumbers", () {
     Expression e;
-    Iterator<Token> i;
+    Iterator<Token?> i;
 
     e = new Expression("1");
     i = e.getExpressionTokenizer();
     i.moveNext();
-    assertToken("1", TokenType.literal, i.current);
+    assertToken("1", TokenType.literal, i.current!);
     expect(i.moveNext(), false);
     expect(i.current, null);
 
     e = new Expression("-1");
     i = e.getExpressionTokenizer();
     i.moveNext();
-    assertToken("-u", TokenType.unaryOperator, i.current);
+    assertToken("-u", TokenType.unaryOperator, i.current!);
     i.moveNext();
-    assertToken("1", TokenType.literal, i.current);
+    assertToken("1", TokenType.literal, i.current!);
     i.moveNext();
     expect(i.moveNext(), false);
     expect(i.current, null);
@@ -98,57 +98,57 @@ void main() {
     i = e.getExpressionTokenizer();
 
     i.moveNext();
-    assertToken("123", TokenType.literal, i.current);
+    assertToken("123", TokenType.literal, i.current!);
     expect(i.moveNext(), false);
     expect(i.current, null);
 
     e = new Expression("-123");
     i = e.getExpressionTokenizer();
     i.moveNext();
-    assertToken("-u", TokenType.unaryOperator, i.current);
+    assertToken("-u", TokenType.unaryOperator, i.current!);
     i.moveNext();
-    assertToken("123", TokenType.literal, i.current);
+    assertToken("123", TokenType.literal, i.current!);
     expect(i.moveNext(), false);
     expect(i.current, null);
 
     e = new Expression("123.4");
     i = e.getExpressionTokenizer();
     i.moveNext();
-    assertToken("123.4", TokenType.literal, i.current);
+    assertToken("123.4", TokenType.literal, i.current!);
     expect(i.moveNext(), false);
     expect(i.current, null);
 
     e = new Expression("-123.456");
     i = e.getExpressionTokenizer();
     i.moveNext();
-    assertToken("-u", TokenType.unaryOperator, i.current);
+    assertToken("-u", TokenType.unaryOperator, i.current!);
     i.moveNext();
-    assertToken("123.456", TokenType.literal, i.current);
+    assertToken("123.456", TokenType.literal, i.current!);
     expect(i.moveNext(), false);
     expect(i.current, null);
 
     e = new Expression(".1");
     i = e.getExpressionTokenizer();
     i.moveNext();
-    assertToken(".1", TokenType.literal, i.current);
+    assertToken(".1", TokenType.literal, i.current!);
     expect(i.moveNext(), false);
     expect(i.current, null);
 
     e = new Expression("-.1");
     i = e.getExpressionTokenizer();
     i.moveNext();
-    assertToken("-u", TokenType.unaryOperator, i.current);
+    assertToken("-u", TokenType.unaryOperator, i.current!);
     i.moveNext();
-    assertToken(".1", TokenType.literal, i.current);
+    assertToken(".1", TokenType.literal, i.current!);
     expect(i.moveNext(), false);
     expect(i.current, null);
   });
 
   test("testTokenizerExtraSpaces", () {
     Expression e = new Expression("1 ");
-    Iterator<Token> i = e.getExpressionTokenizer();
+    Iterator<Token?> i = e.getExpressionTokenizer();
     expect(i.moveNext(), true);
-    assertToken("1", TokenType.literal, i.current);
+    assertToken("1", TokenType.literal, i.current!);
     expect(i.moveNext(), false);
     expect(i.current, null);
 
@@ -160,320 +160,320 @@ void main() {
     e = new Expression("   1      ");
     i = e.getExpressionTokenizer();
     expect(i.moveNext(), true);
-    assertToken("1", TokenType.literal, i.current);
+    assertToken("1", TokenType.literal, i.current!);
     expect(i.moveNext(), false);
     expect(i.current, null);
 
     e = new Expression("  1   +   2    ");
     i = e.getExpressionTokenizer();
     i.moveNext();
-    assertToken("1", TokenType.literal, i.current);
+    assertToken("1", TokenType.literal, i.current!);
     i.moveNext();
-    assertToken("+", TokenType.operator, i.current);
+    assertToken("+", TokenType.operator, i.current!);
     i.moveNext();
-    assertToken("2", TokenType.literal, i.current);
+    assertToken("2", TokenType.literal, i.current!);
     expect(i.moveNext(), false);
     expect(i.current, null);
   });
 
   test("testTokenizer1", () {
     Expression e = new Expression("1+2");
-    Iterator<Token> i = e.getExpressionTokenizer();
+    Iterator<Token?> i = e.getExpressionTokenizer();
 
     i.moveNext();
-    assertToken("1", TokenType.literal, i.current);
+    assertToken("1", TokenType.literal, i.current!);
     i.moveNext();
-    assertToken("+", TokenType.operator, i.current);
+    assertToken("+", TokenType.operator, i.current!);
     i.moveNext();
-    assertToken("2", TokenType.literal, i.current);
+    assertToken("2", TokenType.literal, i.current!);
   });
 
   test("testTokenizer2", () {
     Expression e = new Expression("1 + 2");
-    Iterator<Token> i = e.getExpressionTokenizer();
+    Iterator<Token?> i = e.getExpressionTokenizer();
 
     i.moveNext();
-    assertToken("1", TokenType.literal, i.current);
+    assertToken("1", TokenType.literal, i.current!);
     i.moveNext();
-    assertToken("+", TokenType.operator, i.current);
+    assertToken("+", TokenType.operator, i.current!);
     i.moveNext();
-    assertToken("2", TokenType.literal, i.current);
+    assertToken("2", TokenType.literal, i.current!);
   });
 
   test("testTokenizer3", () {
     Expression e = new Expression(" 1 + 2 ");
-    Iterator<Token> i = e.getExpressionTokenizer();
+    Iterator<Token?> i = e.getExpressionTokenizer();
 
     i.moveNext();
-    assertToken("1", TokenType.literal, i.current);
+    assertToken("1", TokenType.literal, i.current!);
     i.moveNext();
-    assertToken("+", TokenType.operator, i.current);
+    assertToken("+", TokenType.operator, i.current!);
     i.moveNext();
-    assertToken("2", TokenType.literal, i.current);
+    assertToken("2", TokenType.literal, i.current!);
   });
 
   test("testTokenizer4", () {
     Expression e = new Expression("1+2-3/4*5");
-    Iterator<Token> i = e.getExpressionTokenizer();
+    Iterator<Token?> i = e.getExpressionTokenizer();
 
     i.moveNext();
-    assertToken("1", TokenType.literal, i.current);
+    assertToken("1", TokenType.literal, i.current!);
     i.moveNext();
-    assertToken("+", TokenType.operator, i.current);
+    assertToken("+", TokenType.operator, i.current!);
     i.moveNext();
-    assertToken("2", TokenType.literal, i.current);
+    assertToken("2", TokenType.literal, i.current!);
     i.moveNext();
-    assertToken("-", TokenType.operator, i.current);
+    assertToken("-", TokenType.operator, i.current!);
     i.moveNext();
-    assertToken("3", TokenType.literal, i.current);
+    assertToken("3", TokenType.literal, i.current!);
     i.moveNext();
-    assertToken("/", TokenType.operator, i.current);
+    assertToken("/", TokenType.operator, i.current!);
     i.moveNext();
-    assertToken("4", TokenType.literal, i.current);
+    assertToken("4", TokenType.literal, i.current!);
     i.moveNext();
-    assertToken("*", TokenType.operator, i.current);
+    assertToken("*", TokenType.operator, i.current!);
     i.moveNext();
-    assertToken("5", TokenType.literal, i.current);
+    assertToken("5", TokenType.literal, i.current!);
   });
 
   test("testTokenizer5", () {
     Expression e = new Expression("1+2.1-3.45/4.982*5.0");
-    Iterator<Token> i = e.getExpressionTokenizer();
+    Iterator<Token?> i = e.getExpressionTokenizer();
 
     i.moveNext();
-    assertToken("1", TokenType.literal, i.current);
+    assertToken("1", TokenType.literal, i.current!);
     i.moveNext();
-    assertToken("+", TokenType.operator, i.current);
+    assertToken("+", TokenType.operator, i.current!);
     i.moveNext();
-    assertToken("2.1", TokenType.literal, i.current);
+    assertToken("2.1", TokenType.literal, i.current!);
     i.moveNext();
-    assertToken("-", TokenType.operator, i.current);
+    assertToken("-", TokenType.operator, i.current!);
     i.moveNext();
-    assertToken("3.45", TokenType.literal, i.current);
+    assertToken("3.45", TokenType.literal, i.current!);
     i.moveNext();
-    assertToken("/", TokenType.operator, i.current);
+    assertToken("/", TokenType.operator, i.current!);
     i.moveNext();
-    assertToken("4.982", TokenType.literal, i.current);
+    assertToken("4.982", TokenType.literal, i.current!);
     i.moveNext();
-    assertToken("*", TokenType.operator, i.current);
+    assertToken("*", TokenType.operator, i.current!);
     i.moveNext();
-    assertToken("5.0", TokenType.literal, i.current);
+    assertToken("5.0", TokenType.literal, i.current!);
     i.moveNext();
   });
 
   test("testTokenizer6", () {
     Expression e = new Expression("-3+4*-1");
-    Iterator<Token> i = e.getExpressionTokenizer();
+    Iterator<Token?> i = e.getExpressionTokenizer();
 
     i.moveNext();
-    assertToken("-u", TokenType.unaryOperator, i.current);
+    assertToken("-u", TokenType.unaryOperator, i.current!);
     i.moveNext();
-    assertToken("3", TokenType.literal, i.current);
+    assertToken("3", TokenType.literal, i.current!);
     i.moveNext();
-    assertToken("+", TokenType.operator, i.current);
+    assertToken("+", TokenType.operator, i.current!);
     i.moveNext();
-    assertToken("4", TokenType.literal, i.current);
+    assertToken("4", TokenType.literal, i.current!);
     i.moveNext();
-    assertToken("*", TokenType.operator, i.current);
+    assertToken("*", TokenType.operator, i.current!);
     i.moveNext();
-    assertToken("-u", TokenType.unaryOperator, i.current);
+    assertToken("-u", TokenType.unaryOperator, i.current!);
     i.moveNext();
-    assertToken("1", TokenType.literal, i.current);
+    assertToken("1", TokenType.literal, i.current!);
   });
 
   test("testTokenizer7", () {
     Expression e = new Expression("(-3+4)*-1/(7-(5*-8))");
-    Iterator<Token> i = e.getExpressionTokenizer();
+    Iterator<Token?> i = e.getExpressionTokenizer();
 
     i.moveNext();
-    assertToken("(", TokenType.openParen, i.current);
+    assertToken("(", TokenType.openParen, i.current!);
     i.moveNext();
-    assertToken("-u", TokenType.unaryOperator, i.current);
+    assertToken("-u", TokenType.unaryOperator, i.current!);
     i.moveNext();
-    assertToken("3", TokenType.literal, i.current);
+    assertToken("3", TokenType.literal, i.current!);
     i.moveNext();
-    assertToken("+", TokenType.operator, i.current);
+    assertToken("+", TokenType.operator, i.current!);
     i.moveNext();
-    assertToken("4", TokenType.literal, i.current);
+    assertToken("4", TokenType.literal, i.current!);
     i.moveNext();
-    assertToken(")", TokenType.closeParen, i.current);
+    assertToken(")", TokenType.closeParen, i.current!);
 
     i.moveNext();
-    assertToken("*", TokenType.operator, i.current);
+    assertToken("*", TokenType.operator, i.current!);
     i.moveNext();
-    assertToken("-u", TokenType.unaryOperator, i.current);
+    assertToken("-u", TokenType.unaryOperator, i.current!);
     i.moveNext();
-    assertToken("1", TokenType.literal, i.current);
+    assertToken("1", TokenType.literal, i.current!);
     i.moveNext();
-    assertToken("/", TokenType.operator, i.current);
+    assertToken("/", TokenType.operator, i.current!);
     i.moveNext();
-    assertToken("(", TokenType.openParen, i.current);
+    assertToken("(", TokenType.openParen, i.current!);
     i.moveNext();
-    assertToken("7", TokenType.literal, i.current);
+    assertToken("7", TokenType.literal, i.current!);
     i.moveNext();
-    assertToken("-", TokenType.operator, i.current);
+    assertToken("-", TokenType.operator, i.current!);
     i.moveNext();
-    assertToken("(", TokenType.openParen, i.current);
+    assertToken("(", TokenType.openParen, i.current!);
     i.moveNext();
-    assertToken("5", TokenType.literal, i.current);
+    assertToken("5", TokenType.literal, i.current!);
     i.moveNext();
-    assertToken("*", TokenType.operator, i.current);
+    assertToken("*", TokenType.operator, i.current!);
     i.moveNext();
-    assertToken("-u", TokenType.unaryOperator, i.current);
+    assertToken("-u", TokenType.unaryOperator, i.current!);
     i.moveNext();
-    assertToken("8", TokenType.literal, i.current);
+    assertToken("8", TokenType.literal, i.current!);
     i.moveNext();
-    assertToken(")", TokenType.closeParen, i.current);
+    assertToken(")", TokenType.closeParen, i.current!);
     i.moveNext();
-    assertToken(")", TokenType.closeParen, i.current);
+    assertToken(")", TokenType.closeParen, i.current!);
   });
 
   test("testTokenizer8", () {
     Expression e = new Expression("(1.9+2.8)/4.7");
-    Iterator<Token> i = e.getExpressionTokenizer();
+    Iterator<Token?> i = e.getExpressionTokenizer();
 
     i.moveNext();
-    assertToken("(", TokenType.openParen, i.current);
+    assertToken("(", TokenType.openParen, i.current!);
     i.moveNext();
-    assertToken("1.9", TokenType.literal, i.current);
+    assertToken("1.9", TokenType.literal, i.current!);
     i.moveNext();
-    assertToken("+", TokenType.operator, i.current);
+    assertToken("+", TokenType.operator, i.current!);
     i.moveNext();
-    assertToken("2.8", TokenType.literal, i.current);
+    assertToken("2.8", TokenType.literal, i.current!);
     i.moveNext();
-    assertToken(")", TokenType.closeParen, i.current);
+    assertToken(")", TokenType.closeParen, i.current!);
     i.moveNext();
-    assertToken("/", TokenType.operator, i.current);
+    assertToken("/", TokenType.operator, i.current!);
     i.moveNext();
-    assertToken("4.7", TokenType.literal, i.current);
+    assertToken("4.7", TokenType.literal, i.current!);
   });
 
   test("testTokenizerFunction1", () {
     Expression e = new Expression("ABS(3.5)");
-    Iterator<Token> i = e.getExpressionTokenizer();
+    Iterator<Token?> i = e.getExpressionTokenizer();
 
     i.moveNext();
-    assertToken("ABS", TokenType.function, i.current);
+    assertToken("ABS", TokenType.function, i.current!);
     i.moveNext();
-    assertToken("(", TokenType.openParen, i.current);
+    assertToken("(", TokenType.openParen, i.current!);
     i.moveNext();
-    assertToken("3.5", TokenType.literal, i.current);
+    assertToken("3.5", TokenType.literal, i.current!);
     i.moveNext();
-    assertToken(")", TokenType.closeParen, i.current);
+    assertToken(")", TokenType.closeParen, i.current!);
   });
 
   test("testTokenizerFunction2", () {
     Expression e = new Expression("3-ABS(3.5)/9");
-    Iterator<Token> i = e.getExpressionTokenizer();
+    Iterator<Token?> i = e.getExpressionTokenizer();
 
     i.moveNext();
-    assertToken("3", TokenType.literal, i.current);
+    assertToken("3", TokenType.literal, i.current!);
     i.moveNext();
-    assertToken("-", TokenType.operator, i.current);
+    assertToken("-", TokenType.operator, i.current!);
     i.moveNext();
-    assertToken("ABS", TokenType.function, i.current);
+    assertToken("ABS", TokenType.function, i.current!);
     i.moveNext();
-    assertToken("(", TokenType.openParen, i.current);
+    assertToken("(", TokenType.openParen, i.current!);
     i.moveNext();
-    assertToken("3.5", TokenType.literal, i.current);
+    assertToken("3.5", TokenType.literal, i.current!);
     i.moveNext();
-    assertToken(")", TokenType.closeParen, i.current);
+    assertToken(")", TokenType.closeParen, i.current!);
     i.moveNext();
-    assertToken("/", TokenType.operator, i.current);
+    assertToken("/", TokenType.operator, i.current!);
     i.moveNext();
-    assertToken("9", TokenType.literal, i.current);
+    assertToken("9", TokenType.literal, i.current!);
   });
 
   test("testTokenizerFunction3", () {
     Expression e = new Expression("MAX(3.5,5.2)");
-    Iterator<Token> i = e.getExpressionTokenizer();
+    Iterator<Token?> i = e.getExpressionTokenizer();
 
     i.moveNext();
-    assertToken("MAX", TokenType.function, i.current);
+    assertToken("MAX", TokenType.function, i.current!);
     i.moveNext();
-    assertToken("(", TokenType.openParen, i.current);
+    assertToken("(", TokenType.openParen, i.current!);
     i.moveNext();
-    assertToken("3.5", TokenType.literal, i.current);
+    assertToken("3.5", TokenType.literal, i.current!);
     i.moveNext();
-    assertToken(",", TokenType.comma, i.current);
+    assertToken(",", TokenType.comma, i.current!);
     i.moveNext();
-    assertToken("5.2", TokenType.literal, i.current);
+    assertToken("5.2", TokenType.literal, i.current!);
     i.moveNext();
-    assertToken(")", TokenType.closeParen, i.current);
+    assertToken(")", TokenType.closeParen, i.current!);
   });
 
   test("testTokenizerFunction4", () {
     Expression e = new Expression("3-MAX(3.5,5.2)/9");
-    Iterator<Token> i = e.getExpressionTokenizer();
+    Iterator<Token?> i = e.getExpressionTokenizer();
 
     i.moveNext();
-    assertToken("3", TokenType.literal, i.current);
+    assertToken("3", TokenType.literal, i.current!);
     i.moveNext();
-    assertToken("-", TokenType.operator, i.current);
+    assertToken("-", TokenType.operator, i.current!);
     i.moveNext();
-    assertToken("MAX", TokenType.function, i.current);
+    assertToken("MAX", TokenType.function, i.current!);
     i.moveNext();
-    assertToken("(", TokenType.openParen, i.current);
+    assertToken("(", TokenType.openParen, i.current!);
     i.moveNext();
-    assertToken("3.5", TokenType.literal, i.current);
+    assertToken("3.5", TokenType.literal, i.current!);
     i.moveNext();
-    assertToken(",", TokenType.comma, i.current);
+    assertToken(",", TokenType.comma, i.current!);
     i.moveNext();
-    assertToken("5.2", TokenType.literal, i.current);
+    assertToken("5.2", TokenType.literal, i.current!);
     i.moveNext();
-    assertToken(")", TokenType.closeParen, i.current);
+    assertToken(")", TokenType.closeParen, i.current!);
     i.moveNext();
-    assertToken("/", TokenType.operator, i.current);
+    assertToken("/", TokenType.operator, i.current!);
     i.moveNext();
-    assertToken("9", TokenType.literal, i.current);
+    assertToken("9", TokenType.literal, i.current!);
   });
 
   test("testTokenizerFunction5", () {
     Expression e = new Expression("3/MAX(-3.5,-5.2)/9");
-    Iterator<Token> i = e.getExpressionTokenizer();
+    Iterator<Token?> i = e.getExpressionTokenizer();
 
     i.moveNext();
-    assertToken("3", TokenType.literal, i.current);
+    assertToken("3", TokenType.literal, i.current!);
     i.moveNext();
-    assertToken("/", TokenType.operator, i.current);
+    assertToken("/", TokenType.operator, i.current!);
     i.moveNext();
-    assertToken("MAX", TokenType.function, i.current);
+    assertToken("MAX", TokenType.function, i.current!);
     i.moveNext();
-    assertToken("(", TokenType.openParen, i.current);
+    assertToken("(", TokenType.openParen, i.current!);
     i.moveNext();
-    assertToken("-u", TokenType.unaryOperator, i.current);
+    assertToken("-u", TokenType.unaryOperator, i.current!);
     i.moveNext();
-    assertToken("3.5", TokenType.literal, i.current);
+    assertToken("3.5", TokenType.literal, i.current!);
     i.moveNext();
-    assertToken(",", TokenType.comma, i.current);
+    assertToken(",", TokenType.comma, i.current!);
     i.moveNext();
-    assertToken("-u", TokenType.unaryOperator, i.current);
+    assertToken("-u", TokenType.unaryOperator, i.current!);
     i.moveNext();
-    assertToken("5.2", TokenType.literal, i.current);
+    assertToken("5.2", TokenType.literal, i.current!);
     i.moveNext();
-    assertToken(")", TokenType.closeParen, i.current);
+    assertToken(")", TokenType.closeParen, i.current!);
     i.moveNext();
-    assertToken("/", TokenType.operator, i.current);
+    assertToken("/", TokenType.operator, i.current!);
     i.moveNext();
-    assertToken("9", TokenType.literal, i.current);
+    assertToken("9", TokenType.literal, i.current!);
   });
 
   test("testInsertImplicitMultiplication", () {
     Expression e = new Expression("22(3+1)");
-    Iterator<Token> i = e.getExpressionTokenizer();
+    Iterator<Token?> i = e.getExpressionTokenizer();
 
     i.moveNext();
-    assertToken("22", TokenType.literal, i.current);
+    assertToken("22", TokenType.literal, i.current!);
     i.moveNext();
-    assertToken("(", TokenType.openParen, i.current);
+    assertToken("(", TokenType.openParen, i.current!);
     i.moveNext();
-    assertToken("3", TokenType.literal, i.current);
+    assertToken("3", TokenType.literal, i.current!);
     i.moveNext();
-    assertToken("+", TokenType.operator, i.current);
+    assertToken("+", TokenType.operator, i.current!);
     i.moveNext();
-    assertToken("1", TokenType.literal, i.current);
+    assertToken("1", TokenType.literal, i.current!);
     i.moveNext();
-    assertToken(")", TokenType.closeParen, i.current);
+    assertToken(")", TokenType.closeParen, i.current!);
   });
 
   test("testBracesCustomOperatorAndInIf", () {
@@ -489,7 +489,7 @@ void main() {
       return b2 ? Decimal.one : Decimal.zero;
     }));
 
-    Decimal result =
+    Decimal? result =
         (e..setStringVariable("a", "0")..setStringVariable("b", "0")).eval();
 
     expect(result.toString(), "0");

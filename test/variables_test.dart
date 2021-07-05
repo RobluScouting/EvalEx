@@ -30,14 +30,14 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test("testVars", () {
-    expect(Expression("PI").eval().toStringAsFixed(7), "3.1415927");
-    expect(Expression("PI").eval().toString(),
+    expect(Expression("PI").eval()?.toStringAsFixed(7), "3.1415927");
+    expect(Expression("PI").eval()?.toString(),
         "3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679");
-    expect(Expression("PI").eval().toStringAsFixed(34),
+    expect(Expression("PI").eval()?.toStringAsFixed(34),
         "3.1415926535897932384626433832795029");
-    expect(Expression("PI").eval().toStringAsFixed(16), "3.1415926535897932");
-    expect(Expression("PI").eval().toStringAsFixed(7), "3.1415927");
-    expect(Expression("PI*2.0").eval().toStringAsFixed(7), "6.2831853");
+    expect(Expression("PI").eval()?.toStringAsFixed(16), "3.1415926535897932");
+    expect(Expression("PI").eval()?.toStringAsFixed(7), "3.1415927");
+    expect(Expression("PI*2.0").eval()?.toStringAsFixed(7), "6.2831853");
     expect(
         (Expression("3*x")..setDecimalVariable("x", Decimal.fromInt(7)))
             .eval()
@@ -144,9 +144,9 @@ void main() {
     try {
       new Expression("a+1")..setStringVariable("a", "null").eval();
     } on AssertionError catch (e) {
-      err = e.message;
+      err = e.message.toString();
     }
 
-    expect(err, "First operand may not be null");
+    expect(err, "First operand may not be null.");
   });
 }

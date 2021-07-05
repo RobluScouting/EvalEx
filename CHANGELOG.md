@@ -1,3 +1,9 @@
+## [1.1.0] - 7/5/2021
+Switched to null safety and updated dependencies. Added support for suffix/postfix operators
+from commit: https://github.com/uklimaschewski/EvalEx/commit/ac55e57426f698bbe8fd966294796d83a4f27d31
+as well as a bug fix for string variables from commit: 
+https://github.com/uklimaschewski/EvalEx/commit/cb66e7065325e1117371e6aad1cd7955088dd33d.
+
 ## [1.0.12] - 12/29/2020
 Fixing static analysis issues introduced in latest Flutter releases
 

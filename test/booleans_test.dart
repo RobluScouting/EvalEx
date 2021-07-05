@@ -78,14 +78,14 @@ void main() {
 
   test('testAndTokenizer', () {
     Expression e = new Expression("1&&0");
-    Iterator<Token> i = e.getExpressionTokenizer();
+    Iterator<Token?> i = e.getExpressionTokenizer();
 
     i.moveNext();
-    assertToken("1", TokenType.literal, i.current);
+    assertToken("1", TokenType.literal, i.current!);
     i.moveNext();
-    assertToken("&&", TokenType.operator, i.current);
+    assertToken("&&", TokenType.operator, i.current!);
     i.moveNext();
-    assertToken("0", TokenType.literal, i.current);
+    assertToken("0", TokenType.literal, i.current!);
   });
 
   test('testAndRPN', () {
