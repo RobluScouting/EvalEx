@@ -1,3 +1,6 @@
+## [1.1.1] - 2/11/2022
+Bumped decimal dependency to latest version
+
 ## [1.1.0] - 7/5/2021
 Switched to null safety and updated dependencies. Added support for suffix/postfix operators
 from commit: https://github.com/uklimaschewski/EvalEx/commit/ac55e57426f698bbe8fd966294796d83a4f27d31
