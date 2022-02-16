@@ -90,7 +90,7 @@ void main() {
       for (Decimal parameter in params) {
         avg = avg + parameter;
       }
-      return avg / Decimal.fromInt(params.length);
+      return (avg / Decimal.fromInt(params.length)).toDecimal();
     }));
 
     expect(e.eval().toString(), "9");
@@ -107,7 +107,7 @@ void main() {
       for (Decimal parameter in params) {
         avg = avg + parameter;
       }
-      return avg / Decimal.fromInt(params.length);
+      return (avg / Decimal.fromInt(params.length)).toDecimal();
     }));
 
     expect(e.eval().toString(), "28");

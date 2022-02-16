@@ -1,3 +1,6 @@
+## [1.1.2] - 2/16/2022
+Switched to Decimal 2.1.0
+
 ## [1.1.1] - 2/11/2022
 Bumped decimal dependency to latest version
 

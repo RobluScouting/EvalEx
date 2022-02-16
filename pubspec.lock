@@ -49,7 +49,7 @@ packages:
       name: decimal
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.5.0"
+    version: "2.1.0"
   fake_async:
     dependency: transitive
     description:
@@ -101,7 +101,7 @@ packages:
       name: rational
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.2.1"
+    version: "2.1.0"
   sky_engine:
     dependency: transitive
     description: flutter

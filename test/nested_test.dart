@@ -94,7 +94,7 @@ void main() {
     e.addFunc(FunctionImpl("myAvg", 2, fEval: (params) {
       expect(params.length, 2);
       Decimal two = Decimal.fromInt(2);
-      Decimal res = (params[0] + params[1]) / two;
+      Decimal res = ((params[0] + params[1]) / two).toDecimal();
       return res;
     }));
 

@@ -39,7 +39,7 @@ void main() {
     Expression e = new Expression("2.1234 >> 2");
 
     e.addOperator(OperatorImpl(">>", 30, true, fEval: (v1, v2) {
-      return Decimal.parse(pow(10, v2.toInt()).toString()) * v1;
+      return Decimal.parse(pow(10, v2.toBigInt().toInt()).toString()) * v1;
     }));
 
     expect(e.eval().toString(), "212.34");
@@ -50,7 +50,7 @@ void main() {
 
     e.addFunc(AbstractFuncImpl("average", 3, fEval: (params) {
       Decimal sum = params[0] + params[1] + params[2];
-      return sum / Decimal.fromInt(3);
+      return (sum / Decimal.fromInt(3)).toDecimal();
     }));
 
     expect(e.eval().toString(), "16");
@@ -61,7 +61,7 @@ void main() {
 
     e.addFunc(FunctionImpl("average", 3, fEval: (params) {
       Decimal sum = params[0] + params[1] + params[2];
-      return sum / Decimal.fromInt(3);
+      return (sum / Decimal.fromInt(3)).toDecimal();
     }));
 
     expect(e.eval().toString(), "16");
@@ -74,7 +74,7 @@ void main() {
       for (Decimal param in params) {
         sum = sum + param;
       }
-      return sum / Decimal.fromInt(params.length);
+      return (sum / Decimal.fromInt(params.length)).toDecimal();
     }));
 
     expect(e.eval().toString(), "14");
@@ -87,7 +87,7 @@ void main() {
       for (Decimal param in params) {
         sum = sum + param;
       }
-      return sum / Decimal.fromInt(params.length);
+      return (sum / Decimal.fromInt(params.length)).toDecimal();
     }));
 
     expect(e.eval().toString(), "14");
@@ -184,7 +184,7 @@ void main() {
         throw new ExpressionException("Operand must be <= 50");
       }
 
-      int number = v1.toInt();
+      int number = v1.toBigInt().toInt();
 
       Decimal factorial = Decimal.one;
       for (int i = 1; i <= number; i++) {

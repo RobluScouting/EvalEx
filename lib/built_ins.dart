@@ -36,33 +36,31 @@ import 'abstract_unary_operator.dart';
 import 'expression.dart';
 
 void addBuiltIns(Expression e) {
-  e.addOperator(OperatorImpl("+", Expression.operatorPrecedenceAdditive, true,
-      fEval: (v1, v2) {
+  e.addOperator(OperatorImpl("+", Expression.operatorPrecedenceAdditive, true, fEval: (v1, v2) {
     return v1 + v2;
   }));
 
-  e.addOperator(OperatorImpl("-", Expression.operatorPrecedenceAdditive, true,
-      fEval: (v1, v2) {
+  e.addOperator(OperatorImpl("-", Expression.operatorPrecedenceAdditive, true, fEval: (v1, v2) {
     return v1 - v2;
   }));
 
-  e.addOperator(OperatorImpl(
-      "*", Expression.operatorPrecedenceMultiplicative, true, fEval: (v1, v2) {
+  e.addOperator(OperatorImpl("*", Expression.operatorPrecedenceMultiplicative, true, fEval: (v1, v2) {
     return v1 * v2;
   }));
 
-  e.addOperator(OperatorImpl(
-      "/", Expression.operatorPrecedenceMultiplicative, true, fEval: (v1, v2) {
-    return v1 / v2;
+  e.addOperator(OperatorImpl("/", Expression.operatorPrecedenceMultiplicative, true, fEval: (v1, v2) {
+    if (v2 == Decimal.zero) {
+      throw new ExpressionException("Cannot divide by 0.");
+    }
+
+    return (v1 / v2).toDecimal(scaleOnInfinitePrecision: 16);
   }));
 
-  e.addOperator(OperatorImpl(
-      "%", Expression.operatorPrecedenceMultiplicative, true, fEval: (v1, v2) {
+  e.addOperator(OperatorImpl("%", Expression.operatorPrecedenceMultiplicative, true, fEval: (v1, v2) {
     return v1 % v2;
   }));
 
-  e.addOperator(
-      OperatorImpl("^", e.powerOperatorPrecedence, false, fEval: (v1, v2) {
+  e.addOperator(OperatorImpl("^", e.powerOperatorPrecedence, false, fEval: (v1, v2) {
     // Do an more high performance estimate to see if this should be request
     // should be canned
     double test = math.pow(v1.toDouble(), v2.toDouble()).toDouble();
@@ -79,20 +77,18 @@ void addBuiltIns(Expression e) {
     v2 = v2 * Decimal.fromInt(signOf2);
     Decimal remainderOf2 = v2.remainder(Decimal.one);
     Decimal n2IntPart = v2 - remainderOf2;
-    Decimal intPow = v1.pow(n2IntPart.toInt());
-    Decimal doublePow =
-        Decimal.parse(math.pow(dn1, remainderOf2.toDouble()).toString());
+    Decimal intPow = v1.pow(n2IntPart.toBigInt().toInt());
+    Decimal doublePow = Decimal.parse(math.pow(dn1, remainderOf2.toDouble()).toString());
 
     Decimal result = intPow * doublePow;
     if (signOf2 == -1) {
-      result = Decimal.one / result;
+      result = (Decimal.one / result).toDecimal(scaleOnInfinitePrecision: 16);
     }
 
     return result;
   }));
 
-  e.addOperator(OperatorImpl("&&", Expression.operatorPrecedenceAnd, false,
-      booleanOperator: true, fEval: (v1, v2) {
+  e.addOperator(OperatorImpl("&&", Expression.operatorPrecedenceAnd, false, booleanOperator: true, fEval: (v1, v2) {
     bool b1 = v1.compareTo(Decimal.zero) != 0;
 
     if (!b1) {
@@ -104,8 +100,7 @@ void addBuiltIns(Expression e) {
     return b2 ? Decimal.one : Decimal.zero;
   }));
 
-  e.addOperator(OperatorImpl("||", Expression.operatorPrecedenceOr, false,
-      booleanOperator: true, fEval: (v1, v2) {
+  e.addOperator(OperatorImpl("||", Expression.operatorPrecedenceOr, false, booleanOperator: true, fEval: (v1, v2) {
     bool b1 = v1.compareTo(Decimal.zero) != 0;
 
     if (b1) {
@@ -117,32 +112,27 @@ void addBuiltIns(Expression e) {
     return b2 ? Decimal.one : Decimal.zero;
   }));
 
-  e.addOperator(OperatorImpl(
-      ">", Expression.operatorPrecedenceComparison, false, fEval: (v1, v2) {
+  e.addOperator(OperatorImpl(">", Expression.operatorPrecedenceComparison, false, fEval: (v1, v2) {
     return v1.compareTo(v2) > 0 ? Decimal.one : Decimal.zero;
   }));
 
-  e.addOperator(OperatorImpl(
-      ">=", Expression.operatorPrecedenceComparison, false,
-      booleanOperator: true, fEval: (v1, v2) {
+  e.addOperator(
+      OperatorImpl(">=", Expression.operatorPrecedenceComparison, false, booleanOperator: true, fEval: (v1, v2) {
     return v1.compareTo(v2) >= 0 ? Decimal.one : Decimal.zero;
   }));
 
-  e.addOperator(OperatorImpl(
-      "<", Expression.operatorPrecedenceComparison, false,
-      booleanOperator: true, fEval: (v1, v2) {
+  e.addOperator(
+      OperatorImpl("<", Expression.operatorPrecedenceComparison, false, booleanOperator: true, fEval: (v1, v2) {
     return v1.compareTo(v2) < 0 ? Decimal.one : Decimal.zero;
   }));
 
-  e.addOperator(OperatorImpl(
-      "<=", Expression.operatorPrecedenceComparison, false,
-      booleanOperator: true, fEval: (v1, v2) {
+  e.addOperator(
+      OperatorImpl("<=", Expression.operatorPrecedenceComparison, false, booleanOperator: true, fEval: (v1, v2) {
     return v1.compareTo(v2) <= 0 ? Decimal.one : Decimal.zero;
   }));
 
-  e.addOperator(OperatorNullArgsImpl(
-      "=", Expression.operatorPrecedenceEquality, false, booleanOperator: true,
-      fEval: (v1, v2) {
+  e.addOperator(
+      OperatorNullArgsImpl("=", Expression.operatorPrecedenceEquality, false, booleanOperator: true, fEval: (v1, v2) {
     if (v1 == v2) {
       return Decimal.one;
     }
@@ -154,9 +144,8 @@ void addBuiltIns(Expression e) {
     return v1.compareTo(v2) == 0 ? Decimal.one : Decimal.zero;
   }));
 
-  e.addOperator(OperatorNullArgsImpl(
-      "==", Expression.operatorPrecedenceEquality, false, booleanOperator: true,
-      fEval: (v1, v2) {
+  e.addOperator(
+      OperatorNullArgsImpl("==", Expression.operatorPrecedenceEquality, false, booleanOperator: true, fEval: (v1, v2) {
     if (v1 == v2) {
       return Decimal.one;
     }
@@ -168,9 +157,8 @@ void addBuiltIns(Expression e) {
     return v1.compareTo(v2) == 0 ? Decimal.one : Decimal.zero;
   }));
 
-  e.addOperator(OperatorNullArgsImpl(
-      "!=", Expression.operatorPrecedenceEquality, false, booleanOperator: true,
-      fEval: (v1, v2) {
+  e.addOperator(
+      OperatorNullArgsImpl("!=", Expression.operatorPrecedenceEquality, false, booleanOperator: true, fEval: (v1, v2) {
     if (v1 == v2) {
       return Decimal.zero;
     }
@@ -182,9 +170,8 @@ void addBuiltIns(Expression e) {
     return v1.compareTo(v2) != 0 ? Decimal.one : Decimal.zero;
   }));
 
-  e.addOperator(OperatorNullArgsImpl(
-      "<>", Expression.operatorPrecedenceEquality, false, booleanOperator: true,
-      fEval: (v1, v2) {
+  e.addOperator(
+      OperatorNullArgsImpl("<>", Expression.operatorPrecedenceEquality, false, booleanOperator: true, fEval: (v1, v2) {
     if (v1 == v2) {
       return Decimal.zero;
     }
@@ -204,13 +191,11 @@ void addBuiltIns(Expression e) {
     }
   }));
 
-  e.addOperator(UnaryOperatorImpl(
-      "-", Expression.operatorPrecedenceUnary, false, fEval: (v1) {
+  e.addOperator(UnaryOperatorImpl("-", Expression.operatorPrecedenceUnary, false, fEval: (v1) {
     return v1 * Decimal.fromInt(-1);
   }));
 
-  e.addOperator(UnaryOperatorImpl(
-      "+", Expression.operatorPrecedenceUnary, false, fEval: (v1) {
+  e.addOperator(UnaryOperatorImpl("+", Expression.operatorPrecedenceUnary, false, fEval: (v1) {
     return v1 * Decimal.one;
   }));
 
@@ -219,7 +204,7 @@ void addBuiltIns(Expression e) {
       throw new ExpressionException("Operand must be <= 50");
     }
 
-    int number = v.toInt();
+    int number = v.toBigInt().toInt();
 
     Decimal factorial = Decimal.one;
     for (int i = 1; i <= number; i++) {
@@ -233,7 +218,7 @@ void addBuiltIns(Expression e) {
       throw new ExpressionException("Operand must be <= 50");
     }
 
-    int number = params.first.toInt();
+    int number = params.first.toBigInt().toInt();
 
     Decimal factorial = Decimal.one;
     for (int i = 1; i <= number; i++) {
@@ -381,8 +366,7 @@ void addBuiltIns(Expression e) {
   }));
 
   e.addFunc(FunctionImpl("ATAN2", 2, fEval: (params) {
-    double d =
-        radsToDegrees(math.atan2(params[0].toDouble(), params[1].toDouble()));
+    double d = radsToDegrees(math.atan2(params[0].toDouble(), params[1].toDouble()));
     return Decimal.parse(d.toString());
   }));
 
@@ -441,7 +425,7 @@ void addBuiltIns(Expression e) {
 
   e.addFunc(FunctionImpl("ROUND", 2, fEval: (params) {
     Decimal toRound = params.first;
-    return Decimal.parse(toRound.toStringAsFixed(params[1].toInt()));
+    return Decimal.parse(toRound.toStringAsFixed(params[1].toBigInt().toInt()));
   }));
 
   e.addFunc(FunctionImpl("FLOOR", 1, fEval: (params) {
@@ -456,8 +440,7 @@ void addBuiltIns(Expression e) {
     return Decimal.parse(math.sqrt(params.first.toDouble()).toString());
   }));
 
-  e.variables["theAnswerToLifeTheUniverseAndEverything"] =
-      e.createLazyNumber(Decimal.fromInt(42));
+  e.variables["theAnswerToLifeTheUniverseAndEverything"] = e.createLazyNumber(Decimal.fromInt(42));
 
   e.variables["e"] = e.createLazyNumber(Expression.e);
   e.variables["PI"] = e.createLazyNumber(Expression.pi);
@@ -471,11 +454,8 @@ class OperatorImpl extends AbstractOperator {
   Function(Decimal v1, Decimal v2) fEval;
 
   OperatorImpl(String oper, int precedence, bool leftAssoc,
-      {bool booleanOperator = false,
-      bool unaryOperator = false,
-      required this.fEval})
-      : super(oper, precedence, leftAssoc,
-            booleanOperator: booleanOperator, unaryOperator: unaryOperator);
+      {bool booleanOperator = false, bool unaryOperator = false, required this.fEval})
+      : super(oper, precedence, leftAssoc, booleanOperator: booleanOperator, unaryOperator: unaryOperator);
 
   @override
   Decimal eval(Decimal? v1, Decimal? v2) {
@@ -493,10 +473,8 @@ class OperatorImpl extends AbstractOperator {
 class OperatorSuffixImpl extends AbstractOperator {
   Function(Decimal v1) fEval;
 
-  OperatorSuffixImpl(String oper, int precedence, bool leftAssoc,
-      {bool booleanOperator = false, required this.fEval})
-      : super(oper, precedence, leftAssoc,
-            booleanOperator: booleanOperator, unaryOperator: true);
+  OperatorSuffixImpl(String oper, int precedence, bool leftAssoc, {bool booleanOperator = false, required this.fEval})
+      : super(oper, precedence, leftAssoc, booleanOperator: booleanOperator, unaryOperator: true);
 
   @override
   Decimal eval(Decimal? v1, Decimal? v2) {
@@ -515,11 +493,8 @@ class OperatorNullArgsImpl extends AbstractOperator {
   Function(Decimal? v1, Decimal? v2) fEval;
 
   OperatorNullArgsImpl(String oper, int precedence, bool leftAssoc,
-      {bool booleanOperator = false,
-      bool unaryOperator = false,
-      required this.fEval})
-      : super(oper, precedence, leftAssoc,
-            booleanOperator: booleanOperator, unaryOperator: unaryOperator);
+      {bool booleanOperator = false, bool unaryOperator = false, required this.fEval})
+      : super(oper, precedence, leftAssoc, booleanOperator: booleanOperator, unaryOperator: unaryOperator);
 
   @override
   Decimal eval(Decimal? v1, Decimal? v2) {
@@ -531,8 +506,7 @@ class UnaryOperatorImpl extends AbstractUnaryOperator {
   // Type defs?
   Function(Decimal v1) fEval;
 
-  UnaryOperatorImpl(String oper, int precedence, bool leftAssoc,
-      {required this.fEval})
+  UnaryOperatorImpl(String oper, int precedence, bool leftAssoc, {required this.fEval})
       : super(oper, precedence, leftAssoc);
 
   @override
@@ -548,8 +522,7 @@ class UnaryOperatorImpl extends AbstractUnaryOperator {
 class FunctionImpl extends AbstractFunction {
   Function(List<Decimal>) fEval;
 
-  FunctionImpl(String name, int numParams,
-      {bool booleanFunction = false, required this.fEval})
+  FunctionImpl(String name, int numParams, {bool booleanFunction = false, required this.fEval})
       : super(name, numParams, booleanFunction: booleanFunction);
 
   @override
@@ -571,8 +544,7 @@ class FunctionImpl extends AbstractFunction {
 class LazyFunctionImpl extends AbstractLazyFunction {
   Function(List<LazyNumber>) fEval;
 
-  LazyFunctionImpl(String name, int numParams,
-      {bool booleanFunction = false, required this.fEval})
+  LazyFunctionImpl(String name, int numParams, {bool booleanFunction = false, required this.fEval})
       : super(name, numParams, booleanFunction: booleanFunction);
 
   @override
