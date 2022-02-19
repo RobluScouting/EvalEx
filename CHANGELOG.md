@@ -1,3 +1,6 @@
+## [1.1.4] - 2/19/2022
+Completely removed Flutter dependency except for dev unit tests. 
+
 ## [1.1.3] - 2/19/2022
 Removed dependency on Flutter, fixed file formatting.
 
