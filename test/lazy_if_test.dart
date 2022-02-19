@@ -51,7 +51,8 @@ void main() {
     Expression expression = new Expression("if(a=0,if(5/a>3,2,4),0)")
       ..setDecimalVariable("a", Decimal.zero);
 
-    expect(() => expression.eval(), throwsA(isInstanceOf<ExpressionException>()));
+    expect(
+        () => expression.eval(), throwsA(isInstanceOf<ExpressionException>()));
   });
 
   test("testLazyIfWithNull", () {

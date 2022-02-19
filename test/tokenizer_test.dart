@@ -489,8 +489,10 @@ void main() {
       return b2 ? Decimal.one : Decimal.zero;
     }));
 
-    Decimal? result =
-        (e..setStringVariable("a", "0")..setStringVariable("b", "0")).eval();
+    Decimal? result = (e
+          ..setStringVariable("a", "0")
+          ..setStringVariable("b", "0"))
+        .eval();
 
     expect(result.toString(), "0");
   });

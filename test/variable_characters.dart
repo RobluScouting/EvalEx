@@ -64,7 +64,9 @@ void main() {
     expression =
         new Expression("a.b/2*PI+MIN(e,b)").setVariableCharacters("_.");
     expect(
-        (expression..setStringVariable("a.b", "2")..setStringVariable("b", "3"))
+        (expression
+              ..setStringVariable("a.b", "2")
+              ..setStringVariable("b", "3"))
             .eval()
             ?.toStringAsPrecision(7),
         "5.859874");
@@ -83,7 +85,9 @@ void main() {
         .setVariableCharacters("_.")
         .setFirstVariableCharacters(".");
     expect(
-        (expression..setStringVariable("a.b", "2")..setStringVariable("b", "3"))
+        (expression
+              ..setStringVariable("a.b", "2")
+              ..setStringVariable("b", "3"))
             .eval()
             ?.toStringAsFixed(7),
         "5.8598745");

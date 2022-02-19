@@ -63,7 +63,9 @@ void main() {
     Expression e = new Expression("x+y");
 
     expect(
-        (e..setStringVariable("x", "1")..setStringVariable("y", "1"))
+        (e
+              ..setStringVariable("x", "1")
+              ..setStringVariable("y", "1"))
             .eval()
             .toString(),
         "2");

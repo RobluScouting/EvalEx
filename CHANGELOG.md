@@ -1,3 +1,6 @@
+## [1.1.3] - 2/19/2022
+Removed dependency on Flutter, fixed file formatting.
+
 ## [1.1.2] - 2/16/2022
 Switched to Decimal 2.1.0
 
