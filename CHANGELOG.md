@@ -1,3 +1,9 @@
+## [1.1.6] - 2/19/2022
+More static analysis issues fixed.
+
+## [1.1.5] - 2/19/2022
+Fixed some static analysis issues, switching to Dart unit test library.
+
 ## [1.1.4] - 2/19/2022
 Completely removed Flutter dependency except for dev unit tests. 
 

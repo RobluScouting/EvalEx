@@ -26,7 +26,7 @@
 
 import 'package:decimal/decimal.dart';
 import 'package:eval_ex/expression.dart';
-import 'package:flutter_test/flutter_test.dart';
+import 'package:test/test.dart';
 
 void main() {
   test("testVars", () {
@@ -130,7 +130,7 @@ void main() {
 
   test("failsIfVariableDoesNotExist", () {
     expect(() => Expression("3*unknown").eval(),
-        throwsA(isInstanceOf<ExpressionException>()));
+        throwsA(isA<ExpressionException>()));
   });
 
   test("testNullVariable", () {

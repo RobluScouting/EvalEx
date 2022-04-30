@@ -25,7 +25,7 @@
  */
 
 import 'package:eval_ex/expression.dart';
-import 'package:flutter_test/flutter_test.dart';
+import 'package:test/test.dart';
 
 void main() {
   test("testSimple", () {
@@ -83,12 +83,12 @@ void main() {
 
   test("testError1", () {
     Expression e = new Expression("1234e-2.3");
-    expect(() => e.eval(), throwsA(isInstanceOf<FormatException>()));
+    expect(() => e.eval(), throwsA(isA<FormatException>()));
   });
 
   test("testError2", () {
     Expression e = new Expression("1234e2.3");
-    expect(() => e.eval(), throwsA(isInstanceOf<FormatException>()));
+    expect(() => e.eval(), throwsA(isA<FormatException>()));
   });
 
   test("testError3", () {

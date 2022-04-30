@@ -26,7 +26,7 @@
 
 import 'package:decimal/decimal.dart';
 import 'package:eval_ex/expression.dart';
-import 'package:flutter_test/flutter_test.dart';
+import 'package:test/test.dart';
 
 void main() {
   test("testLazyIf", () {
@@ -52,7 +52,7 @@ void main() {
       ..setDecimalVariable("a", Decimal.zero);
 
     expect(
-        () => expression.eval(), throwsA(isInstanceOf<ExpressionException>()));
+        () => expression.eval(), throwsA(isA<ExpressionException>()));
   });
 
   test("testLazyIfWithNull", () {

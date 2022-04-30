@@ -27,7 +27,7 @@
 import 'package:decimal/decimal.dart';
 import 'package:eval_ex/built_ins.dart';
 import 'package:eval_ex/expression.dart';
-import 'package:flutter_test/flutter_test.dart';
+import 'package:test/test.dart';
 
 void main() {
   test("testVariableIsCaseInsensitive", () {

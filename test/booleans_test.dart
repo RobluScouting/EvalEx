@@ -25,7 +25,7 @@
  */
 
 import 'package:eval_ex/expression.dart';
-import 'package:flutter_test/flutter_test.dart';
+import 'package:test/test.dart';
 
 void assertToken(String surface, TokenType type, Token actual) {
   expect(actual.surface, surface);

@@ -1,5 +1,5 @@
 bool isLetter(String ch) {
-  if (ch.length == 0) {
+  if (ch.isEmpty) {
     return false;
   }
 
@@ -17,7 +17,7 @@ bool isDigit(String? ch) {
     return false;
   }
 
-  if (ch.length == 0) {
+  if (ch.isEmpty) {
     return false;
   }
 
@@ -27,7 +27,7 @@ bool isDigit(String? ch) {
 
 // https://github.com/google/quiver-dart/blob/774b7fda30afad7537d779def2e34e47de385286/lib/strings.dart#L110
 bool isWhitespace(String ch) {
-  if (ch.length == 0) {
+  if (ch.isEmpty) {
     return false;
   }
   int rune = ch.codeUnitAt(0);

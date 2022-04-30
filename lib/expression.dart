@@ -681,7 +681,7 @@ class Expression {
   String toRPN() {
     String result = "";
     for (Token t in getRPN()) {
-      if (result.length != 0) {
+      if (result.isNotEmpty) {
         result += " ";
       }
       if (t.type == TokenType.variable && variables.containsKey(t.surface)) {
