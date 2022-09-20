@@ -1,3 +1,6 @@
+## [1.1.7] - 9/20/2022
+Bumping decimal version to 2.3.0 (fixes power function builtin error)
+
 ## [1.1.6] - 2/19/2022
 More static analysis issues fixed.
 

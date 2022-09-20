@@ -83,7 +83,7 @@ void addBuiltIns(Expression e) {
     v2 = v2 * Decimal.fromInt(signOf2);
     Decimal remainderOf2 = v2.remainder(Decimal.one);
     Decimal n2IntPart = v2 - remainderOf2;
-    Decimal intPow = v1.pow(n2IntPart.toBigInt().toInt());
+    Decimal intPow = v1.pow(n2IntPart.toBigInt().toInt()).toDecimal();
     Decimal doublePow =
         Decimal.parse(math.pow(dn1, remainderOf2.toDouble()).toString());
 
