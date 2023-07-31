@@ -477,7 +477,7 @@ void main() {
   });
 
   test("testBracesCustomOperatorAndInIf", () {
-    Expression e = new Expression("if( (a=0) and (b=0), 0, 1)");
+    Expression e = new Expression("if( (a=0) AND (b=0), 0, 1)");
 
     e.addOperator(OperatorImpl("AND", Expression.operatorPrecedenceAnd, false,
         booleanOperator: true, fEval: (v1, v2) {

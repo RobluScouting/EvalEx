@@ -92,15 +92,15 @@ class Expression {
 
   /// All defined operators with name and implementation.
   Map<String, ILazyOperator> operators =
-      SplayTreeMap((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
+      SplayTreeMap((a, b) => a.compareTo(b));
 
   /// All defined functions with name and implementation.
   Map<String, ILazyFunction> functions =
-      SplayTreeMap((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
+      SplayTreeMap((a, b) => a.compareTo(b));
 
   /// All defined variables with name and value.
   Map<String, LazyNumber?> variables =
-      SplayTreeMap((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
+      SplayTreeMap((a, b) => a.compareTo(b));
 
   /// What character to use for decimal separators.
   static final String _decimalSeparator = ".";
@@ -950,7 +950,7 @@ class _Tokenizer extends Iterator<Token?> {
       token.type = isHex ? TokenType.hexLiteral : TokenType.literal;
     } else if (ch == '"') {
       pos++;
-      if (previousToken!.type != TokenType.stringParam) {
+      if (previousToken?.type != TokenType.stringParam) {
         ch = input[pos];
         while (ch != '"') {
           token.append(input[pos++]);

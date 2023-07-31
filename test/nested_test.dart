@@ -112,7 +112,7 @@ void main() {
 
     e.setStringVariable("b", "123.45678"); // e=((123.45678 >> 2))+2+y
     e.setStringVariable("x", "b >> 2"); // e=((b >> 2)+2)+y
-    e.setStringVariable("a", "X+2"); // e=(x+2)+y
+    e.setStringVariable("a", "x+2"); // e=(x+2)+y
     e.setStringVariable(
         "y", "5"); // e=((123.45678>>2)+2)+5 = 12345.678+2+5 = 12352.678
     expect(e.eval().toString(), "12352.678");

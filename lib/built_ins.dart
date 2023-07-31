@@ -466,8 +466,14 @@ void addBuiltIns(Expression e) {
   e.variables["e"] = e.createLazyNumber(Expression.e);
   e.variables["PI"] = e.createLazyNumber(Expression.pi);
   e.variables["NULL"] = null;
+  e.variables["null"] = null;
+  e.variables["Null"] = null;
   e.variables["TRUE"] = e.createLazyNumber(Decimal.one);
+  e.variables["true"] = e.createLazyNumber(Decimal.one);
+  e.variables["True"] = e.createLazyNumber(Decimal.one);
   e.variables["FALSE"] = e.createLazyNumber(Decimal.zero);
+  e.variables["false"] = e.createLazyNumber(Decimal.zero);
+  e.variables["False"] = e.createLazyNumber(Decimal.zero);
 }
 
 // Expects two, non null arguments
