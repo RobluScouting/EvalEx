@@ -1,3 +1,6 @@
+## [1.1.8] - 7/31/2023
+Bumping decimal version to 2.3.3 and allowing for case sensitive functions, operators, and variables.
+
 ## [1.1.7] - 9/20/2022
 Bumping decimal version to 2.3.0 (fixes power function builtin error)
 

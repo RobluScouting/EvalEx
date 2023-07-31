@@ -950,7 +950,7 @@ class _Tokenizer extends Iterator<Token?> {
       token.type = isHex ? TokenType.hexLiteral : TokenType.literal;
     } else if (ch == '"') {
       pos++;
-      if (previousToken!.type != TokenType.stringParam) {
+      if (previousToken?.type != TokenType.stringParam) {
         ch = input[pos];
         while (ch != '"') {
           token.append(input[pos++]);
