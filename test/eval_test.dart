@@ -480,7 +480,7 @@ void main() {
 
     err = "";
     try {
-      new Expression("round(1, NulL)").eval();
+      new Expression("round(1, Null)").eval();
     } on AssertionError catch (e) {
       err = e.message.toString();
     }
@@ -581,5 +581,17 @@ void main() {
 
     e = new Expression("STREQ(\"\",\"\")");
     expect(e.eval().toString(), "1");
+  });
+
+  test("testMultipleCases", () {
+    Expression expression = new Expression("L * l * h");
+
+    expression.setStringVariable("L", "30");
+    expression.setStringVariable("l", "40");
+    expression.setStringVariable("h", "50");
+
+    expect(expression.variables['L']!.getString(), "30");
+    expect(expression.variables['l']!.getString(), "40");
+    expect(expression.variables['h']!.getString(), "50");
   });
 }

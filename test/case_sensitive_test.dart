@@ -30,25 +30,25 @@ import 'package:eval_ex/expression.dart';
 import 'package:test/test.dart';
 
 void main() {
-  test("testVariableIsCaseInsensitive", () {
+  test("testVariableIsCaseSensitive", () {
     Expression expression = new Expression("a");
     expression.setDecimalVariable("A", Decimal.fromInt(20));
-    expect(expression.eval()?.toBigInt().toInt(), 20);
+    expect(() => expression.eval()?.toBigInt().toInt(), throwsA(TypeMatcher<ExpressionException>()));
 
     expression = new Expression("a + B");
     expression.setDecimalVariable("A", Decimal.fromInt(10));
     expression.setDecimalVariable("b", Decimal.fromInt(10));
-    expect(expression.eval()?.toBigInt().toInt(), 20);
+    expect(() => expression.eval()?.toBigInt().toInt(), throwsA(TypeMatcher<ExpressionException>()));
 
     expression = new Expression("a+B");
     expression.setStringVariable("A", "c+d");
     expression.setDecimalVariable("b", Decimal.fromInt(10));
     expression.setDecimalVariable("C", Decimal.fromInt(5));
     expression.setDecimalVariable("d", Decimal.fromInt(5));
-    expect(expression.eval()?.toBigInt().toInt(), 20);
+    expect(() => expression.eval()?.toBigInt().toInt(), throwsA(TypeMatcher<ExpressionException>()));
   });
 
-  test("testFunctionCaseInsensitive", () {
+  test("testFunctionCaseSensitive", () {
     Expression expression = Expression("a+testsum(1,3)");
     expression.setDecimalVariable("A", Decimal.one);
     expression.addFunc(FunctionImpl("testSum", -1, fEval: (params) {
@@ -59,6 +59,6 @@ void main() {
       return value;
     }));
 
-    expect(expression.eval(), Decimal.fromInt(5));
+    expect(() => expression.eval(), throwsA(TypeMatcher<ExpressionException>()));
   });
 }
