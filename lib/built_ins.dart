@@ -35,16 +35,20 @@ import 'abstract_operator.dart';
 import 'abstract_unary_operator.dart';
 import 'expression.dart';
 
-double _convertAngle(double angle,String currentAngleUnit,{ bool inverse = false}) {
-  switch(currentAngleUnit){
+double _convertAngle(double angle, String currentAngleUnit,
+    {bool inverse = false}) {
+  switch (currentAngleUnit) {
     case 'D':
-      return inverse?n.radianToDegree(angle):n.degreeToRadian(angle);
+      return inverse ? n.radianToDegree(angle) : n.degreeToRadian(angle);
     case 'G':
-      return inverse?n.radianToGrad(angle):n.degreeToRadian(n.gradToDegree(angle));
+      return inverse
+          ? n.radianToGrad(angle)
+          : n.degreeToRadian(n.gradToDegree(angle));
     default:
       return angle;
   }
-} 
+}
+
 void addBuiltIns(Expression e) {
   e.addOperator(OperatorImpl("+", Expression.operatorPrecedenceAdditive, true,
       fEval: (v1, v2) {
@@ -70,29 +74,31 @@ void addBuiltIns(Expression e) {
     return (v1 / v2).toDecimal(scaleOnInfinitePrecision: 16);
   }));
 
-  e.addOperator(OperatorImpl(
-      "mod", Expression.operatorPrecedenceMultiplicative, true, fEval: (v1, v2) {
+  e.addOperator(
+      OperatorImpl("mod", Expression.operatorPrecedenceMultiplicative, true,
+          fEval: (v1, v2) {
     return v1 % v2;
   }));
 
   e.addOperator(OperatorImpl(
       "%", Expression.operatorPrecedenceMultiplicative, true, fEval: (v1, v2) {
-    return Decimal.parse((v1.toDouble()/100*v2.toDouble()).toString());
+    return Decimal.parse((v1.toDouble() / 100 * v2.toDouble()).toString());
   }));
 
   e.addOperator(OperatorImpl("logbase", 50, true, fEval: (v1, v2) {
-    if(v1==Decimal.zero||v2==Decimal.zero){
+    if (v1 == Decimal.zero || v2 == Decimal.zero) {
       throw const ExpressionException('Exponentiation invalid');
     }
-    if(v2==Decimal.one){
+    if (v2 == Decimal.one) {
       throw const ExpressionException('Cannot divide by 0.');
     }
-    return Decimal.parse((math.log(v1.toDouble())/math.log(v2.toDouble())).toString());
-  })); 
-  e.addOperator(OperatorImpl(
-    "yroot", 35, true, fEval: (v1, v2) {
-      return Decimal.parse((math.pow(v1.toDouble(),1/v2.toDouble())).toString());
-  })); 
+    return Decimal.parse(
+        (math.log(v1.toDouble()) / math.log(v2.toDouble())).toString());
+  }));
+  e.addOperator(OperatorImpl("yroot", 35, true, fEval: (v1, v2) {
+    return Decimal.parse(
+        (math.pow(v1.toDouble(), 1 / v2.toDouble())).toString());
+  }));
 
   e.addOperator(
       OperatorImpl("^", e.powerOperatorPrecedence, false, fEval: (v1, v2) {
@@ -151,7 +157,8 @@ void addBuiltIns(Expression e) {
   }));
 
   e.addOperator(OperatorImpl(
-      ">", Expression.operatorPrecedenceComparison, false, fEval: (v1, v2) {
+      ">", Expression.operatorPrecedenceComparison, false,
+      booleanOperator: true, fEval: (v1, v2) {
     return v1.compareTo(v2) > 0 ? Decimal.one : Decimal.zero;
   }));
 
@@ -248,8 +255,7 @@ void addBuiltIns(Expression e) {
   }));
 
   e.addOperator(OperatorSuffixImpl("!", 61, false, fEval: (v) {
-    if (v.toDouble() > 
-    50) {
+    if (v.toDouble() > 50) {
       throw new ExpressionException("Operand must be <= 50");
     }
 
@@ -292,345 +298,352 @@ void addBuiltIns(Expression e) {
 
   e.addFunc(FunctionImpl("DMS", 1, booleanFunction: false, fEval: (params) {
     num n = num.parse(params.first.toString());
-    if(n.toInt()==n) return Decimal.parse(n.toString());
+    if (n.toInt() == n) return Decimal.parse(n.toString());
     int degrees = n.floor();
     double remainingMinutes = (n - degrees) * 60;
     int minutes = remainingMinutes.floor();
     double seconds = (remainingMinutes - minutes) * 60;
-    return Decimal.parse((degrees + (minutes / 100) + (seconds / 10000)).toString());
+    return Decimal.parse(
+        (degrees + (minutes / 100) + (seconds / 10000)).toString());
   }));
 
   // TRIGONOMETRY FUNCTIONS
-  final Map<String,Function(List<Decimal>)> trigonometry = {
+  final Map<String, Function(List<Decimal>)> trigonometry = {
     // Standard, degrees
     'COSD': (List<Decimal> params) {
-      final double ans = n.cos(_convertAngle(params.first.toDouble(),'D'));
+      final double ans = n.cos(_convertAngle(params.first.toDouble(), 'D'));
       return Decimal.parse(ans.toString());
     },
 
     'SIND': (List<Decimal> params) {
-      final double ans = n.sin(_convertAngle(params.first.toDouble(),'D'));
+      final double ans = n.sin(_convertAngle(params.first.toDouble(), 'D'));
       return Decimal.parse(ans.toString());
     },
 
     'TAND': (List<Decimal> params) {
-      final double ans = n.tan(_convertAngle(params.first.toDouble(),'D'));
+      final double ans = n.tan(_convertAngle(params.first.toDouble(), 'D'));
       return Decimal.parse(ans.toString());
     },
 
     'SECD': (List<Decimal> params) {
-      final double ans = 1 / n.cos(_convertAngle(params.first.toDouble(),'D'));
+      final double ans = 1 / n.cos(_convertAngle(params.first.toDouble(), 'D'));
       return Decimal.parse(ans.toString());
     },
 
     'CSCD': (List<Decimal> params) {
       final double val = params.first.toDouble();
-      if(val==0){
+      if (val == 0) {
         throw const ExpressionException("Number must not be 0.");
       }
-      final double ans = 1 / n.sin(_convertAngle(val,'D'));
+      final double ans = 1 / n.sin(_convertAngle(val, 'D'));
       return Decimal.parse(ans.toString());
     },
 
-    'COTD': (List<Decimal> args){
+    'COTD': (List<Decimal> args) {
       final double val = args.first.toDouble();
-      if(val==0){
+      if (val == 0) {
         throw const ExpressionException("Number must not be 0.");
       }
-      final double ans = 1 / n.tan(_convertAngle(val,'D'));
+      final double ans = 1 / n.tan(_convertAngle(val, 'D'));
       return Decimal.parse(ans.toString());
     },
 
     // Inverse arc functions, degrees
-    'ACOSD': (List<Decimal> params){
+    'ACOSD': (List<Decimal> params) {
       final double val = params.first.toDouble();
-      if(val<-1){
+      if (val < -1) {
         throw const ExpressionException("Number must not be smaller than -1.");
       }
-      if(val>1){
+      if (val > 1) {
         throw const ExpressionException("Number must not be greater than 1.");
       }
-      final double ans = _convertAngle(n.acos(val),'D',inverse:true);
+      final double ans = _convertAngle(n.acos(val), 'D', inverse: true);
       return Decimal.parse(ans.toString());
     },
 
-    'ASIND': (List<Decimal> params){
+    'ASIND': (List<Decimal> params) {
       final double val = params.first.toDouble();
-      if(val<-1){
+      if (val < -1) {
         throw const ExpressionException("Number must not be smaller than -1.");
       }
-      if(val>1){
+      if (val > 1) {
         throw const ExpressionException("Number must not be greater than 1.");
       }
-      final double ans = _convertAngle(n.asin(val),'D',inverse:true);
+      final double ans = _convertAngle(n.asin(val), 'D', inverse: true);
       return Decimal.parse(ans.toString());
     },
 
-    'ATAND': (List<Decimal> params){
+    'ATAND': (List<Decimal> params) {
       final double val = params.first.toDouble();
-      final double ans = _convertAngle(n.atan(val),'D',inverse:true);
+      final double ans = _convertAngle(n.atan(val), 'D', inverse: true);
       return Decimal.parse(ans.toString());
     },
 
-    'ASECD': (List<Decimal> params){
+    'ASECD': (List<Decimal> params) {
       final double val = params.first.toDouble();
-      if(val==0){
+      if (val == 0) {
         throw const ExpressionException("Number must not be 0.");
       }
-      if(val>0&&val<1){
-        throw const ExpressionException("Number must be smaller than 0 and >=1");
+      if (val > 0 && val < 1) {
+        throw const ExpressionException(
+            "Number must be smaller than 0 and >=1");
       }
-      final double ans = _convertAngle(n.asec(val),'D',inverse:true);
+      final double ans = _convertAngle(n.asec(val), 'D', inverse: true);
       return Decimal.parse(ans.toString());
     },
 
-    'ACSCD': (List<Decimal> params){
+    'ACSCD': (List<Decimal> params) {
       final double val = params.first.toDouble();
-      if(val==0){
+      if (val == 0) {
         throw const ExpressionException("Number must not be 0.");
       }
-      if(val>0&&val<1){
-        throw const ExpressionException("Number must be smaller than 0 and >=1");
+      if (val > 0 && val < 1) {
+        throw const ExpressionException(
+            "Number must be smaller than 0 and >=1");
       }
-      final double ans = _convertAngle(n.acsc(val),'D',inverse:true);
+      final double ans = _convertAngle(n.acsc(val), 'D', inverse: true);
       return Decimal.parse(ans.toString());
     },
 
-    'ACOTD': (List<Decimal> params){
+    'ACOTD': (List<Decimal> params) {
       final double val = params.first.toDouble();
-      if(val==0){
+      if (val == 0) {
         throw const ExpressionException("Number must not be 0.");
       }
-      final double ans = _convertAngle(n.acot(val),'D',inverse:true);
+      final double ans = _convertAngle(n.acot(val), 'D', inverse: true);
       return Decimal.parse(ans.toString());
     },
 
     // Standard, radians
     'COSR': (List<Decimal> params) {
       final double val = params.first.toDouble();
-      final double ans = n.cos(_convertAngle(val,'R'));
+      final double ans = n.cos(_convertAngle(val, 'R'));
       return Decimal.parse(ans.toString());
     },
 
     'SINR': (List<Decimal> args) {
       final double val = args.first.toDouble();
-      final double ans = n.sin(_convertAngle(val,'R'));
+      final double ans = n.sin(_convertAngle(val, 'R'));
       return Decimal.parse(ans.toString());
     },
 
     'TANR': (List<Decimal> args) {
       final double val = args.first.toDouble();
-      final double ans = n.tan(_convertAngle(val,'R'));
+      final double ans = n.tan(_convertAngle(val, 'R'));
       return Decimal.parse(ans.toString());
     },
 
     'SECR': (List<Decimal> args) {
       final double val = args.first.toDouble();
-      final double ans = 1 / n.cos(_convertAngle(val,'R'));
+      final double ans = 1 / n.cos(_convertAngle(val, 'R'));
       return Decimal.parse(ans.toString());
     },
 
     'CSCR': (List<Decimal> args) {
       final double val = args.first.toDouble();
-      if(val==0){
+      if (val == 0) {
         throw const ExpressionException("Number must not be 0.");
       }
-      final double ans = 1 / n.sin(_convertAngle(val,'R'));
+      final double ans = 1 / n.sin(_convertAngle(val, 'R'));
       return Decimal.parse(ans.toString());
     },
 
-    'COTR': (List<Decimal> args){
+    'COTR': (List<Decimal> args) {
       final double val = args.first.toDouble();
-      if(val==0){
+      if (val == 0) {
         throw const ExpressionException("Number must not be 0.");
       }
-      final double ans = 1 / n.tan(_convertAngle(val,'R'));
+      final double ans = 1 / n.tan(_convertAngle(val, 'R'));
       return Decimal.parse(ans.toString());
     },
 
     // Inverse arc functions, radians
-    'ACOSR': (List<Decimal> params){
+    'ACOSR': (List<Decimal> params) {
       final double val = params.first.toDouble();
-      if(val<-1){
+      if (val < -1) {
         throw const ExpressionException("Number must not be smaller than -1.");
       }
-      if(val>1){
+      if (val > 1) {
         throw const ExpressionException("Number must not be greater than 1.");
       }
-      final double ans = _convertAngle(n.acos(val),'R',inverse:true);
+      final double ans = _convertAngle(n.acos(val), 'R', inverse: true);
       return Decimal.parse(ans.toString());
     },
 
-    'ASINR': (List<Decimal> params){ 
+    'ASINR': (List<Decimal> params) {
       final double val = params.first.toDouble();
-      if(val<-1){
+      if (val < -1) {
         throw const ExpressionException("Number must not be smaller than -1.");
       }
-      if(val>1){
+      if (val > 1) {
         throw const ExpressionException("Number must not be greater than 1.");
       }
-      final double ans = _convertAngle(n.asin(val),'R',inverse:true);
+      final double ans = _convertAngle(n.asin(val), 'R', inverse: true);
       return Decimal.parse(ans.toString());
     },
 
-    'ATANR': (List<Decimal> params){
+    'ATANR': (List<Decimal> params) {
       final double val = params.first.toDouble();
-      final double ans = _convertAngle(n.atan(val),'R',inverse:true);
+      final double ans = _convertAngle(n.atan(val), 'R', inverse: true);
       return Decimal.parse(ans.toString());
     },
 
-    'ASECR': (List<Decimal> params){
+    'ASECR': (List<Decimal> params) {
       final double val = params.first.toDouble();
-      if(val==0){
+      if (val == 0) {
         throw const ExpressionException("Number must not be 0.");
       }
-      if(val>0&&val<1){
-        throw const ExpressionException("Number must be smaller than 0 and >=1");
+      if (val > 0 && val < 1) {
+        throw const ExpressionException(
+            "Number must be smaller than 0 and >=1");
       }
-      final double ans = _convertAngle(n.asec(val),'R',inverse:true);
+      final double ans = _convertAngle(n.asec(val), 'R', inverse: true);
       return Decimal.parse(ans.toString());
     },
 
-    'ACSCR': (List<Decimal> params){
+    'ACSCR': (List<Decimal> params) {
       final double val = params.first.toDouble();
-      if(val==0){
+      if (val == 0) {
         throw const ExpressionException("Number must not be 0.");
       }
-      if(val>0&&val<1){
-        throw const ExpressionException("Number must be smaller than 0 and >=1");
+      if (val > 0 && val < 1) {
+        throw const ExpressionException(
+            "Number must be smaller than 0 and >=1");
       }
-      final double ans = _convertAngle(n.acsc(val),'R',inverse:true);
+      final double ans = _convertAngle(n.acsc(val), 'R', inverse: true);
       return Decimal.parse(ans.toString());
     },
 
-    'ACOTR': (List<Decimal> params){
+    'ACOTR': (List<Decimal> params) {
       final double val = params.first.toDouble();
-      if(val==0){
+      if (val == 0) {
         throw const ExpressionException("Number must not be 0.");
       }
-      final double ans = _convertAngle(n.acot(val),'R',inverse:true);
+      final double ans = _convertAngle(n.acot(val), 'R', inverse: true);
       return Decimal.parse(ans.toString());
     },
 
     // Standard, gradians
     'COSG': (List<Decimal> params) {
       final double val = params.first.toDouble();
-      final double ans = n.cos(_convertAngle(val,'G'));
+      final double ans = n.cos(_convertAngle(val, 'G'));
       return Decimal.parse(ans.toString());
     },
 
     'SING': (List<Decimal> params) {
       final double val = params.first.toDouble();
-      final double ans = n.sin(_convertAngle(val,'G'));
+      final double ans = n.sin(_convertAngle(val, 'G'));
       return Decimal.parse(ans.toString());
     },
 
     'TANG': (List<Decimal> params) {
       final double val = params.first.toDouble();
-      final double ans = n.tan(_convertAngle(val,'G'));
+      final double ans = n.tan(_convertAngle(val, 'G'));
       return Decimal.parse(ans.toString());
     },
 
     'SECG': (List<Decimal> params) {
       final double val = params.first.toDouble();
-      final double ans = 1 / n.cos(_convertAngle(val,'G'));
+      final double ans = 1 / n.cos(_convertAngle(val, 'G'));
       return Decimal.parse(ans.toString());
     },
 
     'CSCG': (List<Decimal> params) {
       final double val = params.first.toDouble();
-      if(val==0){
+      if (val == 0) {
         throw const ExpressionException("Number must not be 0.");
       }
-      final double ans = 1 / n.sin(_convertAngle(val,'G'));
+      final double ans = 1 / n.sin(_convertAngle(val, 'G'));
       return Decimal.parse(ans.toString());
     },
 
-    'COTG': (List<Decimal> params){
+    'COTG': (List<Decimal> params) {
       final double val = params.first.toDouble();
-      if(val==0){
+      if (val == 0) {
         throw const ExpressionException("Number must not be 0.");
       }
-      final double ans = 1 / n.tan(_convertAngle(val,'G'));
+      final double ans = 1 / n.tan(_convertAngle(val, 'G'));
       return Decimal.parse(ans.toString());
     },
 
     // Inverse arc functions, gradians
-    'ACOSG': (List<Decimal> params){
+    'ACOSG': (List<Decimal> params) {
       final double val = params.first.toDouble();
-      if(val<-1){
+      if (val < -1) {
         throw const ExpressionException("Number must not be smaller than -1.");
       }
-      if(val>1){
+      if (val > 1) {
         throw const ExpressionException("Number must not be greater than 1.");
       }
-      final double ans = _convertAngle(n.acos(val),'G',inverse:true);
+      final double ans = _convertAngle(n.acos(val), 'G', inverse: true);
       return Decimal.parse(ans.toString());
     },
 
-    'ASING': (List<Decimal> params){ 
+    'ASING': (List<Decimal> params) {
       final double val = params.first.toDouble();
-      if(val<-1){
+      if (val < -1) {
         throw const ExpressionException("Number must not be smaller than -1.");
       }
-      if(val>1){
+      if (val > 1) {
         throw const ExpressionException("Number must not be greater than 1.");
       }
-      final double ans = _convertAngle(n.asin(val),'G',inverse:true);
+      final double ans = _convertAngle(n.asin(val), 'G', inverse: true);
       return Decimal.parse(ans.toString());
     },
 
-    'ATANG': (List<Decimal> params){
+    'ATANG': (List<Decimal> params) {
       final double val = params.first.toDouble();
-      final double ans = _convertAngle(n.atan(val),'G',inverse:true);
+      final double ans = _convertAngle(n.atan(val), 'G', inverse: true);
       return Decimal.parse(ans.toString());
     },
 
-    'ASECG': (List<Decimal> params){
+    'ASECG': (List<Decimal> params) {
       final double val = params.first.toDouble();
-      if(val==0){
+      if (val == 0) {
         throw const ExpressionException("Number must not be 0.");
       }
-      if(val>0&&val<1){
-        throw const ExpressionException("Number must be smaller than 0 and >=1");
+      if (val > 0 && val < 1) {
+        throw const ExpressionException(
+            "Number must be smaller than 0 and >=1");
       }
-      final double ans = _convertAngle(n.asec(val),'G',inverse:true);
+      final double ans = _convertAngle(n.asec(val), 'G', inverse: true);
       return Decimal.parse(ans.toString());
     },
 
-    'ACSCG': (List<Decimal> params){
+    'ACSCG': (List<Decimal> params) {
       final double val = params.first.toDouble();
-      if(val==0){
+      if (val == 0) {
         throw const ExpressionException("Number must not be 0.");
       }
-      if(val>0&&val<1){
-        throw const ExpressionException("Number must be smaller than 0 and >=1");
+      if (val > 0 && val < 1) {
+        throw const ExpressionException(
+            "Number must be smaller than 0 and >=1");
       }
-      final double ans = _convertAngle(n.acsc(val),'G',inverse:true);
+      final double ans = _convertAngle(n.acsc(val), 'G', inverse: true);
       return Decimal.parse(ans.toString());
     },
 
-    'ACOTG': (List<Decimal> params){
+    'ACOTG': (List<Decimal> params) {
       final double val = params.first.toDouble();
-      if(val==0){
+      if (val == 0) {
         throw const ExpressionException("Number must not be 0.");
       }
-      final double ans = _convertAngle(n.acot(val),'G',inverse:true);
+      final double ans = _convertAngle(n.acot(val), 'G', inverse: true);
       return Decimal.parse(ans.toString());
     },
 
     // Hyperbolic
-    'SINH': (List<Decimal> params){
+    'SINH': (List<Decimal> params) {
       final double val = params.first.toDouble();
       return Decimal.parse(n.sinh(val).toString());
     },
 
-    'COSH': (List<Decimal> params){
+    'COSH': (List<Decimal> params) {
       final double val = params.first.toDouble();
       return Decimal.parse(n.cosh(val).toString());
     },
 
-    'TANH': (List<Decimal> params){
+    'TANH': (List<Decimal> params) {
       final double val = params.first.toDouble();
       return Decimal.parse(n.tanh(val).toString());
     },
@@ -640,88 +653,89 @@ void addBuiltIns(Expression e) {
       return Decimal.parse(n.sech(val).toString());
     },
 
-    'CSCH': (List<Decimal> params){
+    'CSCH': (List<Decimal> params) {
       final double val = params.first.toDouble();
-      if(val==0){
+      if (val == 0) {
         throw const ExpressionException("Number must not be 0.");
       }
       return Decimal.parse(n.csch(val).toString());
     },
 
-    'COTH': (List<Decimal> params){
+    'COTH': (List<Decimal> params) {
       final double val = params.first.toDouble();
-      if(val==0){
+      if (val == 0) {
         throw const ExpressionException("Number must not be 0.");
       }
       return Decimal.parse(n.coth(val).toString());
     },
 
     // Inverse arc functions, hyperbolic
-    'ASINH': (List<Decimal> params){
+    'ASINH': (List<Decimal> params) {
       final double val = params.first.toDouble();
       return Decimal.parse(n.asinh(val).toString());
     },
 
-    'ACOSH': (List<Decimal> params){
+    'ACOSH': (List<Decimal> params) {
       final double val = params.first.toDouble();
-      if(val<1){
+      if (val < 1) {
         throw const ExpressionException('Number must not be smaller than 1.');
       }
       return Decimal.parse(n.acosh(val).toString());
     },
 
-    'ATANH': (List<Decimal> params){
+    'ATANH': (List<Decimal> params) {
       final double val = params.first.toDouble();
-      if(val==1){
+      if (val == 1) {
         throw const ExpressionException("Number must not be 1.");
       }
-      if(val<0){
+      if (val < 0) {
         throw const ExpressionException("Number must not be smaller than 0.");
       }
-      if(val>1){
+      if (val > 1) {
         throw const ExpressionException("Number must not be greater than 1.");
       }
       return Decimal.parse(n.atanh(val).toString());
     },
 
-    'ASECH': (List<Decimal> params){
+    'ASECH': (List<Decimal> params) {
       final double val = params.first.toDouble();
-      if(val==0){
+      if (val == 0) {
         throw const ExpressionException("Number must not be 0.");
       }
-      if(val<0){
+      if (val < 0) {
         throw const ExpressionException("Number must not be smaller than 0.");
       }
-      if(val>1){
+      if (val > 1) {
         throw const ExpressionException("Number must not be greater than 1.");
       }
       return Decimal.parse(n.asech(val).toString());
     },
 
-    'ACSCH': (List<Decimal> params){
+    'ACSCH': (List<Decimal> params) {
       final double val = params.first.toDouble();
-      if(val==0){
+      if (val == 0) {
         throw const ExpressionException("Number must not be 0.");
       }
       return Decimal.parse(n.acsch(val).toString());
     },
 
-    'ACOTH': (List<Decimal> params){
+    'ACOTH': (List<Decimal> params) {
       final double val = params.first.toDouble();
-      if(val==0){
+      if (val == 0) {
         throw const ExpressionException("Number must not be 0.");
       }
-      if(val==1){
+      if (val == 1) {
         throw const ExpressionException("Number must not be 1.");
       }
-      if(val<1){
+      if (val < 1) {
         throw const ExpressionException("Number must not be smaller than 1.");
       }
       return Decimal.parse(n.acoth(val).toString());
     },
   };
   e.addFunc(FunctionImpl("ATAN2D", 2, fEval: (params) {
-    double ans = n.radianToDegree(math.atan2(params[0].toDouble(), params[1].toDouble()));
+    double ans = n
+        .radianToDegree(math.atan2(params[0].toDouble(), params[1].toDouble()));
     return Decimal.parse(ans.toString());
   }));
   e.addFunc(FunctionImpl("ATAN2R", 2, fEval: (params) {
@@ -729,20 +743,16 @@ void addBuiltIns(Expression e) {
     return Decimal.parse(ans.toString());
   }));
   e.addFunc(FunctionImpl("ATAN2G", 2, fEval: (params) {
-    double ans = n.radianToGrad(math.atan2(params[0].toDouble(), params[1].toDouble()));
+    double ans =
+        n.radianToGrad(math.atan2(params[0].toDouble(), params[1].toDouble()));
     return Decimal.parse(ans.toString());
   }));
 
-  for(String funcName in trigonometry.keys){
-    e.addFunc(
-      FunctionImpl(
-        funcName, 1, 
-        booleanFunction: false, 
-        fEval: trigonometry[funcName]!
-      )
-    );
+  for (String funcName in trigonometry.keys) {
+    e.addFunc(FunctionImpl(funcName, 1,
+        booleanFunction: false, fEval: trigonometry[funcName]!));
   } // Adding all the trigonometric functions
-  
+
   // Conversions
   e.addFunc(FunctionImpl("RAD", 1, fEval: (params) {
     double convertedValue = n.degreeToRadian(params.first.toDouble());
@@ -815,15 +825,14 @@ void addBuiltIns(Expression e) {
   e.addFunc(FunctionImpl("SQRT", 1, fEval: (params) {
     return Decimal.parse(math.sqrt(params.first.toDouble()).toString());
   }));
-  
+
   e.addFunc(FunctionImpl("CUBEROOT", 1, fEval: (params) {
     final double n = params.first.toDouble();
-    if(n<0) {
+    if (n < 0) {
       throw const ExpressionException('Number must not be smaller than 0.');
     }
-    return Decimal.parse((math.pow(n,1/3)).toString());
-    }
-  ));
+    return Decimal.parse((math.pow(n, 1 / 3)).toString());
+  }));
 
   e.variables["theAnswerToLifeTheUniverseAndEverything"] =
       e.createLazyNumber(Decimal.fromInt(42));
