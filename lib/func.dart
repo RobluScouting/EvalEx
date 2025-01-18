@@ -33,8 +33,8 @@ abstract class IFunc extends ILazyFunction {
   /// Implementation for this function.
   ///
   /// [parameters] - Parameters will be passed by the expression evaluator as a
-  ///            {@link List} of {@link BigDecimal} values.
-  /// Returns the function must return a new {@link BigDecimal} value as a
+  ///            [List] of BigDecimal values.
+  /// Returns the function must return a new BigDecimal value as a
   /// computing result.
   Decimal eval(List<Decimal?> parameters);
 }
