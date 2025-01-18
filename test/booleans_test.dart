@@ -74,6 +74,18 @@ void main() {
 
     e = new Expression("IF(a==b,x==y,a==b)");
     expect(e.isBoolean(), true);
+
+    e = new Expression("5 < 10");
+    expect(e.isBoolean(), true);
+
+    e = new Expression("5 > 10");
+    expect(e.isBoolean(), true);
+
+    e = new Expression("5 <= 10");
+    expect(e.isBoolean(), true);
+
+    e = new Expression("5 >= 10");
+    expect(e.isBoolean(), true);
   });
 
   test('testAndTokenizer', () {

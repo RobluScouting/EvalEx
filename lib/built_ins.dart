@@ -122,7 +122,8 @@ void addBuiltIns(Expression e) {
   }));
 
   e.addOperator(OperatorImpl(
-      ">", Expression.operatorPrecedenceComparison, false, fEval: (v1, v2) {
+      ">", Expression.operatorPrecedenceComparison, false,
+      booleanOperator: false, fEval: (v1, v2) {
     return v1.compareTo(v2) > 0 ? Decimal.one : Decimal.zero;
   }));
 
