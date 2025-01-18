@@ -78,7 +78,7 @@ void main() {
     e = new Expression("5 < 10");
     expect(e.isBoolean(), true);
 
-    e = new Expression("5 > 10");
+    e = new Expression("50 > 10");
     expect(e.isBoolean(), true);
 
     e = new Expression("5 <= 10");

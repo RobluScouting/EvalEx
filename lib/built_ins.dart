@@ -67,32 +67,7 @@ void addBuiltIns(Expression e) {
 
   e.addOperator(
       OperatorImpl("^", e.powerOperatorPrecedence, false, fEval: (v1, v2) {
-    // Do an more high performance estimate to see if this should be request
-    // should be canned
-    double test = math.pow(v1.toDouble(), v2.toDouble()).toDouble();
-    if (test.isInfinite) {
-      throw new ExpressionException("Exponentiation too expensive");
-    } else if (test.isNaN) {
-      throw new ExpressionException("Exponentiation invalid");
-    }
-
-    // Thanks to Gene Marin:
-    // http://stackoverflow.com/questions/3579779/how-to-do-a-fractional-power-on-bigdecimal-in-java
-    int signOf2 = v2.signum;
-    double dn1 = v1.toDouble();
-    v2 = v2 * Decimal.fromInt(signOf2);
-    Decimal remainderOf2 = v2.remainder(Decimal.one);
-    Decimal n2IntPart = v2 - remainderOf2;
-    Decimal intPow = v1.pow(n2IntPart.toBigInt().toInt()).toDecimal();
-    Decimal doublePow =
-        Decimal.parse(math.pow(dn1, remainderOf2.toDouble()).toString());
-
-    Decimal result = intPow * doublePow;
-    if (signOf2 == -1) {
-      result = (Decimal.one / result).toDecimal(scaleOnInfinitePrecision: 16);
-    }
-
-    return result;
+    return Decimal.parse(math.pow(v1.toDouble(), v2.toDouble()).toString());
   }));
 
   e.addOperator(OperatorImpl("&&", Expression.operatorPrecedenceAnd, false,
@@ -123,7 +98,7 @@ void addBuiltIns(Expression e) {
 
   e.addOperator(OperatorImpl(
       ">", Expression.operatorPrecedenceComparison, false,
-      booleanOperator: false, fEval: (v1, v2) {
+      booleanOperator: true, fEval: (v1, v2) {
     return v1.compareTo(v2) > 0 ? Decimal.one : Decimal.zero;
   }));
 
@@ -232,6 +207,39 @@ void addBuiltIns(Expression e) {
     }
     return factorial;
   }));
+
+  e.addFunc(
+      FunctionImpl("EXP", 2, booleanFunction: false, fEval: (params) {
+        var v1 = params.first;
+        var v2 = params.last;
+
+        // Do an more high performance estimate to see if this should be request
+        // should be canned
+        double test = math.pow(v1.toDouble(), v2.toDouble()).toDouble();
+        if (test.isInfinite) {
+          throw new ExpressionException("Exponentiation too expensive");
+        } else if (test.isNaN) {
+          throw new ExpressionException("Exponentiation invalid");
+        }
+
+        // Thanks to Gene Marin:
+        // http://stackoverflow.com/questions/3579779/how-to-do-a-fractional-power-on-bigdecimal-in-java
+        int signOf2 = v2.signum;
+        double dn1 = v1.toDouble();
+        v2 = v2 * Decimal.fromInt(signOf2);
+        Decimal remainderOf2 = v2.remainder(Decimal.one);
+        Decimal n2IntPart = v2 - remainderOf2;
+        Decimal intPow = v1.pow(n2IntPart.toBigInt().toInt()).toDecimal();
+        Decimal doublePow =
+        Decimal.parse(math.pow(dn1, remainderOf2.toDouble()).toString());
+
+        Decimal result = intPow * doublePow;
+        if (signOf2 == -1) {
+          result = (Decimal.one / result).toDecimal(scaleOnInfinitePrecision: 16);
+        }
+
+        return result;
+      }));
 
   e.addFunc(FunctionImpl("FACT", 1, booleanFunction: false, fEval: (params) {
     if (params.first.toDouble() > 50) {
@@ -459,6 +467,14 @@ void addBuiltIns(Expression e) {
 
   e.addFunc(FunctionImpl("SQRT", 1, fEval: (params) {
     return Decimal.parse(math.sqrt(params.first.toDouble()).toString());
+  }));
+
+  e.addFunc(FunctionImpl("CUBEROOT", 1, fEval: (params) {
+    final double n = params.first.toDouble();
+    if (n < 0) {
+      throw const ExpressionException('Number must not be smaller than 0.');
+    }
+    return Decimal.parse((math.pow(n, 1 / 3)).toString());
   }));
 
   e.variables["theAnswerToLifeTheUniverseAndEverything"] =

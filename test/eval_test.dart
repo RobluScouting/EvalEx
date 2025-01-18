@@ -143,12 +143,12 @@ void main() {
     expect(Expression("2^8").eval().toString(), "256");
     expect(Expression("3^2").eval().toString(), "9");
     expect(Expression("2.5^2").eval().toString(), "6.25");
-    expect(Expression("2.6^3.5").eval().toString(), "28.34044843681906296");
-    expect(Expression("PI^2").eval()!.toStringAsPrecision(128),
+    expect(Expression("2.6^3.5").eval().toString(), "28.340448436819067");
+    expect(Expression("EXP(PI, 2)").eval()!.toStringAsPrecision(128),
         "9.8696044010893586188344909998761511353136994072407906264133493762200448224192052430017734037185522313078742635808502091666098354");
 
     expect(
-        () => Expression("9^9^9").eval(), throwsA(isA<ExpressionException>()));
+        () => Expression("9^9^9").eval(), throwsA(isA<FormatException>()));
   });
 
   test("testSqrt", () {
@@ -591,5 +591,11 @@ void main() {
     expect(expression.variables['L']!.getString(), "30");
     expect(expression.variables['l']!.getString(), "40");
     expect(expression.variables['h']!.getString(), "50");
+  });
+
+  test("testFast", () {
+    Decimal? expression = Expression("1.000000000000001^1234567").eval();
+
+    expect(expression.toString(), "1.0000000013706447");
   });
 }
