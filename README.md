@@ -34,7 +34,7 @@ void main() {
   
   exp = Expression("1>0 && 5 == 4");
   print(exp.eval().toString()); // 0
-
+  
   // Adding a custom operator
 
   Expression exp = Expression('23 custom_operator 20');
@@ -214,7 +214,7 @@ void main() {
 | FALSE or false       | Alias for 0                                                              |
 
 ## Adding custom functions, operators, and variables
-You can also define your custom functions, operators, and variables in built_ins.dart
+Custom functions, operators, and variables can be defined by adding them in built_ins.dart
 
 ## Differences from https://github.com/uklimaschewski/EvalEx.
   - The SQRT function is currently limited to 64-bit precision
