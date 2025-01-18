@@ -147,8 +147,8 @@ void main() {
     expect(Expression("PI^2").eval()!.toStringAsPrecision(128),
         "9.8696044010893586188344909998761511353136994072407906264133493762200448224192052430017734037185522313078742635808502091666098354");
 
-    expect(() => Expression("9^9^9").eval(),
-        throwsA(isA<ExpressionException>()));
+    expect(
+        () => Expression("9^9^9").eval(), throwsA(isA<ExpressionException>()));
   });
 
   test("testSqrt", () {
@@ -252,8 +252,7 @@ void main() {
   });
 
   test("closeParenAtStartCausesExpressionException", () {
-    expect(() => Expression("(").eval(),
-        throwsA(isA<ExpressionException>()));
+    expect(() => Expression("(").eval(), throwsA(isA<ExpressionException>()));
   });
 
   test("testOrphanedOperatorsInFunctionParameters", () {
@@ -513,13 +512,12 @@ void main() {
   });
 
   test("hexExpressionDoesNotAllowNonHexCharacters", () {
-    expect(() => Expression("0xbaby").eval(),
-        throwsA(isA<ExpressionException>()));
+    expect(
+        () => Expression("0xbaby").eval(), throwsA(isA<ExpressionException>()));
   });
 
   test("throwsExceptionIfDoesNotContainHexDigits", () {
-    expect(() => Expression("0x").eval(),
-        throwsA(isA<FormatException>()));
+    expect(() => Expression("0x").eval(), throwsA(isA<FormatException>()));
   });
 
   test("hexExpressionsEvaluatedAsExpected", () {

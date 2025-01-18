@@ -33,19 +33,22 @@ void main() {
   test("testVariableIsCaseSensitive", () {
     Expression expression = new Expression("a");
     expression.setDecimalVariable("A", Decimal.fromInt(20));
-    expect(() => expression.eval()?.toBigInt().toInt(), throwsA(TypeMatcher<ExpressionException>()));
+    expect(() => expression.eval()?.toBigInt().toInt(),
+        throwsA(TypeMatcher<ExpressionException>()));
 
     expression = new Expression("a + B");
     expression.setDecimalVariable("A", Decimal.fromInt(10));
     expression.setDecimalVariable("b", Decimal.fromInt(10));
-    expect(() => expression.eval()?.toBigInt().toInt(), throwsA(TypeMatcher<ExpressionException>()));
+    expect(() => expression.eval()?.toBigInt().toInt(),
+        throwsA(TypeMatcher<ExpressionException>()));
 
     expression = new Expression("a+B");
     expression.setStringVariable("A", "c+d");
     expression.setDecimalVariable("b", Decimal.fromInt(10));
     expression.setDecimalVariable("C", Decimal.fromInt(5));
     expression.setDecimalVariable("d", Decimal.fromInt(5));
-    expect(() => expression.eval()?.toBigInt().toInt(), throwsA(TypeMatcher<ExpressionException>()));
+    expect(() => expression.eval()?.toBigInt().toInt(),
+        throwsA(TypeMatcher<ExpressionException>()));
   });
 
   test("testFunctionCaseSensitive", () {
@@ -59,6 +62,7 @@ void main() {
       return value;
     }));
 
-    expect(() => expression.eval(), throwsA(TypeMatcher<ExpressionException>()));
+    expect(
+        () => expression.eval(), throwsA(TypeMatcher<ExpressionException>()));
   });
 }
