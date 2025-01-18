@@ -103,10 +103,10 @@ class Expression {
       SplayTreeMap((a, b) => a.compareTo(b));
 
   /// What character to use for decimal separators.
-  static const String _decimalSeparator = ".";
+  static final String _decimalSeparator = ".";
 
   /// What character to use for minus sign (negative values).
-  static const String _minusSign = "-";
+  static final String _minusSign = "-";
 
   /// The BigDecimal representation of the left parenthesis, used for parsing varying numbers of function parameters.
   static final LazyNumber _paramsStart =
